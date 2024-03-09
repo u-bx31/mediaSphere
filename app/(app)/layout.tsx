@@ -1,5 +1,7 @@
 
 import Navbar from "@/components/shared/Navbar";
+import { fetchUser } from "@/lib/actions/user.action";
+import { currentUser } from "@clerk/nextjs";
 
 export default async function RootLayout({
 	children,
@@ -7,9 +9,12 @@ export default async function RootLayout({
 	children: React.ReactNode;
 }>) {
 
+	const user = await currentUser();
+	const userInfo = await fetchUser(user?.id || "");
+	console.log(userInfo);
 	return (
 		<div className="flex flex-col gap-3">
-			<Navbar />
+			<Navbar user={JSON.stringify(userInfo)}/>
 			{children}
 		</div>
 	);

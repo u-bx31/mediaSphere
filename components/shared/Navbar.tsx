@@ -5,8 +5,19 @@ import { Navlinks } from "@/constants";
 import Logo from "@/public/assets/svgs/logo-svg.svg";
 import { useState } from "react";
 import Link from "next/link";
+import { SignOutButton, SignedIn, SignedOut } from "@clerk/nextjs";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 const Navbar = ({ user }: any) => {
+	const curentUser = JSON.parse(user);
 	const { push } = useRouter();
 	const [isOpen, setIsOpen] = useState(false);
 	const pathname = usePathname();
@@ -36,17 +47,58 @@ const Navbar = ({ user }: any) => {
 						</button>
 					</div>
 					<a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-						<Logo
-							className={"w-fit h-14 lg:w-20 lg:h-20"}
-						/>
+						<Logo className={"w-fit h-14 lg:w-20 lg:h-20"} />
 					</a>
 				</div>
 				<div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-					<button
-							className="bg-gray-400 rounded-full w-9 h-9 flex items-center justify-center mr-4 md:mr-0"
+					<SignedIn>
+						<DropdownMenu>
+							<DropdownMenuTrigger className="border-none  focus-visible:ring-transparent">
+								<Image
+									src={curentUser?.image}
+									width={46}
+									height={46}
+									alt="Avatar"
+									className="bg-gray-400 rounded-full object-cover !w-10 !h-10 flex items-center justify-center mr-4 md:mr-0"
+								/>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DropdownMenuLabel className="text-center text-base font-bold">
+									{curentUser?.lastName[0].toUpperCase()}.{curentUser?.firstName}
+								</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem className="cursor-pointer">
+									<div className="flex flex-row items-center gap-3">
+										<User className="w-5 h-5" />
+										<h3 className="text-base ">Profile</h3>
+									</div>
+								</DropdownMenuItem>
+								<DropdownMenuItem className="cursor-pointer">
+									<div className="flex flex-row items-center gap-3">
+										<ClipboardList className="w-5 h-5" />
+										<h3 className="text-base ">My orders</h3>
+									</div>
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem className="cursor-pointer">
+									<SignOutButton>
+										<div className="flex flex-row g-2">
+											<LogOut className="mr-2 h-4 w-4" />
+											<span>Log out</span>
+										</div>
+									</SignOutButton>
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</SignedIn>
+
+					<SignedOut>
+						<button
+							className="bg-gray-400 rounded-full w-10 h-10 flex items-center justify-center mr-4 md:mr-0"
 							onClick={() => push("/sign-in")}>
 							<User className="w-5 h-5" />
 						</button>
+					</SignedOut>
 				</div>
 				<div
 					className={`justify-between ${
