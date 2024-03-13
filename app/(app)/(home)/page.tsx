@@ -1,6 +1,4 @@
-"use client";
-
-import { MoveRight } from "lucide-react";
+import HeroForm from "@/components/forms/HeroForm";
 
 export default function Home() {
 	return (
@@ -19,22 +17,7 @@ export default function Home() {
 							Share your links, social media profiles, contact info and more on just
 							one page
 						</p>
-						<form
-							onSubmit={(e) => e.preventDefault()}
-							className="justify-center  gap-x-1 sm:flex">
-							<div className="bg-white flex flex-row items-center rounded-md">
-								<p className="px-2 text-base font-bold">media-sphere/</p>
-								<input
-									type="text"
-									placeholder="Enter your email"
-									className="w-full px-3 py-4 text-gray-400 bg-white border focus:border-gray-300 duration-150 outline-none rounded-lg shadow sm:max-w-sm sm:w-auto"
-								/>
-							</div>
-							<button className="flex items-center justify-center gap-x-2 py-4 px-4 mt-3 w-full text-sm  text-white font-bold bg-primary hover:bg-primary/50 transition-all duration-150 rounded-lg sm:mt-0 sm:w-auto">
-								Get started for free
-								<MoveRight className="w-5 h-5 stroke-white" />
-							</button>
-						</form>
+						<HeroForm />
 					</div>
 				</div>
 			</section>

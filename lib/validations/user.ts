@@ -11,3 +11,6 @@ export const userProfileValidation = z.object({
 		.regex(/^\+(?:[0-9] ?){9,14}[0-9]$/,{ message: "PhoneNumber must be valid number " })
 		.optional(),
 });
+export const userNameValidation = z.object({
+	userName: z.string().min(3).max(30),
+});

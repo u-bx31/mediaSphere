@@ -108,12 +108,12 @@ const Navbar = ({ user }: any) => {
 					} w-full md:flex md:w-auto md:order-1`}
 					id="navbar-user">
 					<ul className="flex flex-col gap-6 md:gap-0 font-medium p-4 md:p-0 mt-4 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 ">
-						{Navlinks.map((item: any) => {
+						{Navlinks.map((item: any,index) => {
 							const isActive =
 								(pathname.includes(item.route) && item.route.length > 1) ||
 								pathname === item.route;
 							return (
-								<li>
+								<li key={index}>
 									<Link
 										href={item.route}
 										className={`font-medium text-lg py-2 px-3 text-gray-400  ${

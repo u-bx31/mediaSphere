@@ -11,7 +11,6 @@ export default async function RootLayout({
 
 	const user = await currentUser();
 	const userInfo = await fetchUser(user?.id || "");
-	console.log(userInfo);
 	return (
 		<div className="flex flex-col gap-3">
 			<Navbar user={JSON.stringify(userInfo)}/>
