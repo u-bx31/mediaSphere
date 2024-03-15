@@ -15,19 +15,42 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { userNameValidation } from "@/lib/validations/user";
+import SubmitButton from "../shared/SubmitButton";
+import { useState } from "react";
+import { CreateUserAccount } from "@/lib/actions/account.action";
+import { toast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 
-const AccountForm = () => {
-	//FIXME: make it load faster 
+const AccountForm = ({ user }: any) => {
+	const currentUser = JSON.parse(user);
+	const { push } = useRouter();
+	//FIXME: make it load faster
 	const target_username =
-		typeof window !== "undefined" && localStorage.getItem("target_username") || '';
-
+		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
+		"";
+	const [loading, setLoading] = useState(false);
 	const form = useForm<z.infer<typeof userNameValidation>>({
 		resolver: zodResolver(userNameValidation),
 		defaultValues: {
 			userName: "" || target_username?.toString(),
 		},
 	});
-	function onSubmit(data: z.infer<typeof userNameValidation>) {}
+	async function onSubmit(data: z.infer<typeof userNameValidation>) {
+		await CreateUserAccount({
+			userId: currentUser?.id,
+			userName: data.userName || "",
+		}).then((res) => {
+			console.log(res);
+			if (res?.message) {
+				toast({
+					title: res?.message,
+					variant: "destructive",
+				});
+			} else {
+				push("/account/" + currentUser.id);
+			}
+		});
+	}
 	return (
 		<Form {...form}>
 			<form
@@ -49,9 +72,12 @@ const AccountForm = () => {
 						</FormItem>
 					)}
 				/>
-				<Button type="submit" className="w-full">
+				<SubmitButton
+					loading={loading}
+					setLoading={setLoading}
+					className={"!w-full"}>
 					Create
-				</Button>
+				</SubmitButton>
 			</form>
 		</Form>
 	);

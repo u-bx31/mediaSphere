@@ -12,5 +12,5 @@ export const userProfileValidation = z.object({
 		.optional(),
 });
 export const userNameValidation = z.object({
-	userName: z.string().min(3).max(30),
+	userName: z.string().min(2).max(30),
 });
