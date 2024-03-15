@@ -1,5 +1,5 @@
 "use client";
-import { ClipboardList, LogOut, User } from "lucide-react";
+import { AreaChart, ClipboardList, LogOut, User } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { Navlinks } from "@/constants";
 import Logo from "@/public/assets/svgs/logo-svg.svg";
@@ -90,7 +90,7 @@ const Navbar = ({ user }: any) => {
 									className="bg-gray-400 rounded-full object-cover !w-10 !h-10 flex items-center justify-center mr-4 md:mr-0"
 								/>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent>
+							<DropdownMenuContent className="px-3">
 								<DropdownMenuLabel className="text-center text-base font-bold">
 									{currentUser?.lastName[0].toUpperCase()}.{currentUser?.firstName}
 								</DropdownMenuLabel>
@@ -103,7 +103,7 @@ const Navbar = ({ user }: any) => {
 								</DropdownMenuItem>
 								<DropdownMenuItem className="cursor-pointer">
 									<Link href={"/analytics"} className="flex flex-row items-center gap-3">
-										<ClipboardList className="w-5 h-5" />
+										<AreaChart className="w-5 h-5" />
 										<h3 className="text-base ">Analytics</h3>
 									</Link>
 								</DropdownMenuItem>

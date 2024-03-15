@@ -85,7 +85,7 @@
 }
 @layer components {
 	.navbar-class {
-		@apply container h-[60px] md:h-full w-full bg-white bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-30  !px-2 md:!px-5 lg:sticky top-1 rounded-full shadow-sm mt-2 ;
+		@apply container h-[60px] md:h-full w-full bg-white bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-30  !px-2 md:!px-5 lg:sticky top-1  rounded-full z-50 shadow-sm mt-2 ;
 	}
 }
 
