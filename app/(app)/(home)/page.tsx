@@ -1,6 +1,12 @@
 import HeroForm from "@/components/forms/HeroForm";
+import { currentUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+	const user = await currentUser();
+	if (user?.id) {
+		redirect("/account");
+	}
 	return (
 		<div className="container flex flex-col justify-center items-center">
 			<section className="relative">

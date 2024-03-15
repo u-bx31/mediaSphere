@@ -23,7 +23,7 @@ export default function OnboardingComponent({ user }: any) {
 			.then(() => {
 				setLoading(false);
 				setTimeout(() => {
-					push("/");
+					push("/account");
 				}, 4000);
 			})
 			.catch((error) => {

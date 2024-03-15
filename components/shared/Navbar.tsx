@@ -15,6 +15,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { toast } from "@/components/ui/use-toast";
 
 const Navbar = ({ user }: any) => {
 	const curentUser = JSON.parse(user);
@@ -81,7 +82,13 @@ const Navbar = ({ user }: any) => {
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem className="cursor-pointer">
-									<SignOutButton>
+									<SignOutButton
+										signOutCallback={() => {
+											push("/");
+											toast({
+												title: "User loged-out",
+											});
+										}}>
 										<div className="flex flex-row g-2">
 											<LogOut className="mr-2 h-4 w-4" />
 											<span>Log out</span>
@@ -108,7 +115,7 @@ const Navbar = ({ user }: any) => {
 					} w-full md:flex md:w-auto md:order-1`}
 					id="navbar-user">
 					<ul className="flex flex-col gap-6 md:gap-0 font-medium p-4 md:p-0 mt-4 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 ">
-						{Navlinks.map((item: any,index) => {
+						{Navlinks.map((item: any, index) => {
 							const isActive =
 								(pathname.includes(item.route) && item.route.length > 1) ||
 								pathname === item.route;

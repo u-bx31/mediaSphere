@@ -11,10 +11,25 @@ interface AccountUserProps {
 	path?: string;
 }
 
-export async function fetchUserAccount(accountId: string) {
+export async function fetchAccount(accountId: string) {
 	ConnectionToDb();
 	try {
 		return await Account.findById(accountId);
+	} catch (error: any) {
+		throw new Error(`Failed to fetch user :${error}`);
+	}
+}
+
+export async function findUserAccount(userId: string) {
+	ConnectionToDb();
+	const currentUser = await User.findOne({ id: userId });
+	if (!currentUser) {
+		return {
+			message: "This user not found",
+		};
+	}
+	try {
+		return await Account.findOne({ createdBy: currentUser._id });
 	} catch (error: any) {
 		throw new Error(`Failed to fetch user :${error}`);
 	}
@@ -26,14 +41,12 @@ export async function CreateUserAccount({
 	path,
 }: AccountUserProps) {
 	ConnectionToDb();
-	console.log(userId);
 	const user = await User.findOne({ id: userId });
-	const currentUsername = await Account.findOne({userName : userName})
-	console.log(currentUsername);
-	if(currentUsername){
+	const currentUsername = await Account.findOne({ userName: userName });
+	if (currentUsername) {
 		return {
-			message : 'This userName already taken'
-		}
+			message: "This userName already taken",
+		};
 	}
 	try {
 		if (user) {
@@ -41,11 +54,10 @@ export async function CreateUserAccount({
 				userName: userName?.toLowerCase(),
 				createdBy: user?._id,
 			});
-		}
-		else{
+		} else {
 			return {
-				message : 'This user not found'
-			}
+				message: "This user not found",
+			};
 		}
 	} catch (error: any) {
 		throw new Error(`Failed to create/update user :${error.message}`);

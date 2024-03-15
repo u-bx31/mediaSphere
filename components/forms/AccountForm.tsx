@@ -18,7 +18,7 @@ import { userNameValidation } from "@/lib/validations/user";
 import SubmitButton from "../shared/SubmitButton";
 import { useState } from "react";
 import { CreateUserAccount } from "@/lib/actions/account.action";
-import { toast } from "../ui/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 
 const AccountForm = ({ user }: any) => {
@@ -40,7 +40,6 @@ const AccountForm = ({ user }: any) => {
 			userId: currentUser?.id,
 			userName: data.userName || "",
 		}).then((res) => {
-			console.log(res);
 			if (res?.message) {
 				toast({
 					title: res?.message,
@@ -48,6 +47,7 @@ const AccountForm = ({ user }: any) => {
 				});
 			} else {
 				push("/account/" + currentUser.id);
+				localStorage.removeItem("target_username");
 			}
 		});
 	}
