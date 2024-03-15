@@ -4,21 +4,27 @@ import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import SubmitButton from "../shared/SubmitButton";
 
-const HeroForm = () => {
+const HeroForm = ({ user }: any) => {
+	const currentUser = JSON.parse(user);
 	const { push } = useRouter();
 	const handleSubmit = (e: React.SyntheticEvent) => {
 		e.preventDefault();
 		const formData = new FormData(e.target as HTMLFormElement);
 		const userName = formData.get("userName") as string;
-		if (userName.length < 2 || userName.length > 20) {
-			toast({
-				title: "Validation error",
-				description: "The username must be at least between 6  and 20 characters",
-				variant: "destructive",
-			});
+		console.log(currentUser);
+		if (currentUser?.id) {
+			push("/account");
 		} else {
-			window.localStorage.setItem("target_username", userName);
-			push("/sign-up");
+			if (userName.length < 2 || userName.length > 20) {
+				toast({
+					title: "Validation error",
+					description: "The username must be at least between 6  and 20 characters",
+					variant: "destructive",
+				});
+			} else {
+				window.localStorage.setItem("target_username", userName);
+				push("/sign-up");
+			}
 		}
 	};
 
@@ -31,10 +37,10 @@ const HeroForm = () => {
 					id="userName"
 					name="userName"
 					placeholder="Username"
-					className="w-full pr-3 py-4 text-gray-400 bg-white border-none focus:border-gray-300 duration-150 outline-none rounded-lg sm:max-w-sm sm:w-auto"
+					className="w-full pl-1 pr-3 py-4 text-gray-400 bg-white border-none focus:border-gray-300 duration-150 outline-none rounded-lg sm:max-w-sm sm:w-auto"
 				/>
 			</div>
-			<SubmitButton className={'!w-full md:!w-[200px]'}>
+			<SubmitButton className={"!w-full md:!w-[200px]"}>
 				Get started for free
 				<MoveRight className="w-5 h-5 stroke-white" />
 			</SubmitButton>
