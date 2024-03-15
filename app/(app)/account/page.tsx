@@ -8,7 +8,6 @@ const Page = async () => {
 	const user = await currentUser();
 	const userInfo = await fetchUser(user?.id || "");
 	const userAccount = await findUserAccount(user?.id || "");
-	console.log(userAccount);
 	if (userAccount) {
 		redirect("/account/" + user?.id);
 	}

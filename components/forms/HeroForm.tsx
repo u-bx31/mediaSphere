@@ -38,7 +38,6 @@ const HeroForm = () => {
 				Get started for free
 				<MoveRight className="w-5 h-5 stroke-white" />
 			</SubmitButton>
-			{/* <button className="flex items-center justify-center gap-x-2 py-4 px-4 mt-3 w-full text-sm  text-white font-bold bg-primary hover:bg-primary/90 transition-all duration-150 rounded-lg sm:mt-0 sm:w-auto"></button> */}
 		</form>
 	);
 };

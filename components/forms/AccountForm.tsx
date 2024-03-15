@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { userNameValidation } from "@/lib/validations/user";
 import SubmitButton from "../shared/SubmitButton";
-import { useState } from "react";
 import { CreateUserAccount } from "@/lib/actions/account.action";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -28,7 +27,6 @@ const AccountForm = ({ user }: any) => {
 	const target_username =
 		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
 		"";
-	const [loading, setLoading] = useState(false);
 	const form = useForm<z.infer<typeof userNameValidation>>({
 		resolver: zodResolver(userNameValidation),
 		defaultValues: {
@@ -73,8 +71,6 @@ const AccountForm = ({ user }: any) => {
 					)}
 				/>
 				<SubmitButton
-					loading={loading}
-					setLoading={setLoading}
 					className={"!w-full"}>
 					Create
 				</SubmitButton>
