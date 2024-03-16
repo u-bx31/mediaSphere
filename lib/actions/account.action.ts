@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import Account from "../models/account.model";
@@ -11,10 +10,11 @@ interface AccountUserProps {
 	path?: string;
 }
 
-export async function fetchAccount(accountId: string) {
+export async function fetchAccount(userId: string) {
 	ConnectionToDb();
 	try {
-		return await Account.findById(accountId);
+		const user = await User.findOne({ id: userId });
+		return await Account.findOne({ createdBy: user?._id });
 	} catch (error: any) {
 		throw new Error(`Failed to fetch user :${error}`);
 	}
@@ -61,6 +61,54 @@ export async function CreateUserAccount({
 		}
 	} catch (error: any) {
 		throw new Error(`Failed to create/update user :${error.message}`);
+	}
+}
+
+export async function UpdateUserAccount({
+	userId,
+	userName,
+	location,
+	displayName,
+	bio,
+	path,
+}: {
+	userId: string;
+	userName: string;
+	displayName: string;
+	location?: string;
+	bio?: string;
+	path?: string;
+}) {
+	ConnectionToDb();
+	const user = await User.findOne({ id: userId });
+
+	const currentUsername = await Account.findOne({ userName: userName });
+	const updatedUsername = userName;
+	if (currentUsername && currentUsername?.createdBy.toString() != user?._id.toString()) {
+		return {
+			message: "This userName already taken",
+		};
+	} else {
+		try {
+			if (user) {
+				await Account.findOneAndUpdate(
+					{ createdBy: user?._id },
+					{
+						userName: userName?.toLowerCase(),
+						location: location?.toLowerCase(),
+						displayName: displayName?.toLowerCase(),
+						bio: bio?.toLowerCase(),
+					},
+					{ upsert: true }
+				);
+			} else {
+				return {
+					message: "This user not found",
+				};
+			}
+		} catch (error: any) {
+			throw new Error(`Failed to create/update user :${error.message}`);
+		}
 	}
 }
 

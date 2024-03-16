@@ -7,6 +7,9 @@ const accountSchema = new mongoose.Schema({
 		ref: "User",
 		required: true,
 	},
+	displayName: { type: String, min: 1 },
+	location: { type: String, min: 1 },
+	bio: { type: String, min: 1 },
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: Date.now },
 });

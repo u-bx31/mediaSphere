@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 const AccountForm = ({ user }: any) => {
 	const currentUser = JSON.parse(user);
 	const { push } = useRouter();
+	
 	//FIXME: make it load faster
 	const target_username =
 		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
@@ -30,7 +31,7 @@ const AccountForm = ({ user }: any) => {
 	const form = useForm<z.infer<typeof userNameValidation>>({
 		resolver: zodResolver(userNameValidation),
 		defaultValues: {
-			userName: "" || target_username?.toString(),
+			userName: target_username?.toString() || "",
 		},
 	});
 	async function onSubmit(data: z.infer<typeof userNameValidation>) {
