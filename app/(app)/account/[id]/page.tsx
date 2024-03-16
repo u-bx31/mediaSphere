@@ -1,6 +1,5 @@
 import ProfileForm from "@/components/forms/ProfileForm";
 import { fetchAccount } from "@/lib/actions/account.action";
-import { fetchUser } from "@/lib/actions/user.action";
 import { currentUser } from "@clerk/nextjs";
 
 const Page = async () => {

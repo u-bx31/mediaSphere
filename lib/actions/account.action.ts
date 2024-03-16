@@ -15,6 +15,7 @@ export async function fetchAccount(userId: string) {
 	try {
 		const user = await User.findOne({ id: userId });
 		return await Account.findOne({ createdBy: user?._id });
+		
 	} catch (error: any) {
 		throw new Error(`Failed to fetch user :${error}`);
 	}

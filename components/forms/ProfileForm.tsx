@@ -16,16 +16,20 @@ import SubmitButton from "../shared/SubmitButton";
 import { AccountValidation } from "@/lib/validations/account";
 import { Textarea } from "@/components/ui/textarea";
 import { UpdateUserAccount } from "@/lib/actions/account.action";
-import { useState } from "react";
-import { toast } from "../ui/use-toast";
+import { useEffect, useState } from "react";
+import { Loader2Icon } from "lucide-react";
 
 const ProfileForm = ({ user, account }: any) => {
+	const [loading, setLoading] = useState(true);
 	const currentUser = JSON.parse(user);
 	const currentAccount = JSON.parse(account);
-	// const [error, setError] = useState({
-	// 	message: "",
-	// });
-	const { setError } = useForm();
+	//FIXME: change loading to be server side 
+	useEffect(() => {
+		if (currentAccount) {
+			setLoading(false);
+		}
+	}, [currentAccount]);
+
 	const form = useForm<z.infer<typeof AccountValidation>>({
 		resolver: zodResolver(AccountValidation),
 		defaultValues: {
@@ -35,6 +39,7 @@ const ProfileForm = ({ user, account }: any) => {
 			bio: currentAccount?.bio || "",
 		},
 	});
+
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
 		const res = await UpdateUserAccount({
 			userId: currentUser?.id,
@@ -43,15 +48,23 @@ const ProfileForm = ({ user, account }: any) => {
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 		});
-		if (res?.message ) {
-			toast({
-				title: res?.message,
-				variant: "destructive",
+		if (res?.message) {
+			console.log();
+			form.control.setError("userName", {
+				type: "manual",
+				message: res?.message,
 			});
 		}
 	}
 	return (
-		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px]">
+		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
+			{loading && (
+				<div className="bg-white/70 backdrop-blur-sm absolute h-full w-full flex flex-col gap-3 items-center justify-center z-10 transition-all ease-linear">
+					<Loader2Icon className="w-8 h-8 animate-spin" />
+					<h1>Loading your data . . .</h1>
+
+				</div>
+			)}
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div className="w-full bg-gray-200 h-40 md:h-52">bg</div>
@@ -65,7 +78,6 @@ const ProfileForm = ({ user, account }: any) => {
 							control={form.control}
 							name="userName"
 							render={({ field }) => {
-								console.log(field);
 								return (
 									<FormItem>
 										<FormLabel>UserName</FormLabel>
