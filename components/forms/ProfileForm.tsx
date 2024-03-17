@@ -17,18 +17,31 @@ import { AccountValidation } from "@/lib/validations/account";
 import { Textarea } from "@/components/ui/textarea";
 import { UpdateUserAccount } from "@/lib/actions/account.action";
 import { useEffect, useState } from "react";
-import { Loader2Icon } from "lucide-react";
+import { ImagePlus, Loader2Icon, SwatchBook } from "lucide-react";
+import { ComboboxDemo } from "../ui/combobox";
 
 const ProfileForm = ({ user, account }: any) => {
 	const [loading, setLoading] = useState(true);
 	const currentUser = JSON.parse(user);
 	const currentAccount = JSON.parse(account);
-	//FIXME: change loading to be server side 
+	//FIXME: change loading to be server side
 	useEffect(() => {
 		if (currentAccount) {
 			setLoading(false);
 		}
 	}, [currentAccount]);
+	const options = [
+		{
+			value: "color",
+			label: "Color",
+			icon: <SwatchBook className="w-5 h-5 stroke-black" />,
+		},
+		{
+			value: "image",
+			label: "Image",
+			icon: <ImagePlus className="w-5 h-5 stroke-black" />,
+		},
+	];
 
 	const form = useForm<z.infer<typeof AccountValidation>>({
 		resolver: zodResolver(AccountValidation),
@@ -62,12 +75,17 @@ const ProfileForm = ({ user, account }: any) => {
 				<div className="bg-white/70 backdrop-blur-sm absolute h-full w-full flex flex-col gap-3 items-center justify-center z-10 transition-all ease-linear">
 					<Loader2Icon className="w-8 h-8 animate-spin" />
 					<h1>Loading your data . . .</h1>
-
 				</div>
 			)}
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
-					<div className="w-full bg-gray-200 h-40 md:h-52">bg</div>
+					<div className="w-full bg-gray-200 h-40 md:h-52 relative">
+						<ComboboxDemo
+						className="!w-[100px]"
+							buttonClassName="!w-[50px] absolute top-2 right-2 !rounded-full"
+							options={options}
+						/>
+					</div>
 					<div className="flex items-center justify-center -translate-y-9  md:-translate-y-12">
 						<div className="bg-gray-200 h-24 w-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-md">
 							av
