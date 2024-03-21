@@ -15,7 +15,6 @@ export async function fetchAccount(userId: string) {
 	try {
 		const user = await User.findOne({ id: userId });
 		return await Account.findOne({ createdBy: user?._id });
-		
 	} catch (error: any) {
 		throw new Error(`Failed to fetch user :${error}`);
 	}
@@ -70,12 +69,16 @@ export async function UpdateUserAccount({
 	userName,
 	location,
 	displayName,
+	bgType,
+	bgValue,
 	bio,
 	path,
 }: {
 	userId: string;
 	userName: string;
 	displayName: string;
+	bgType: string;
+	bgValue: string;
 	location?: string;
 	bio?: string;
 	path?: string;
@@ -84,8 +87,10 @@ export async function UpdateUserAccount({
 	const user = await User.findOne({ id: userId });
 
 	const currentUsername = await Account.findOne({ userName: userName });
-	const updatedUsername = userName;
-	if (currentUsername && currentUsername?.createdBy.toString() != user?._id.toString()) {
+	if (
+		currentUsername &&
+		currentUsername?.createdBy.toString() != user?._id.toString()
+	) {
 		return {
 			message: "This userName already taken",
 		};
@@ -98,6 +103,11 @@ export async function UpdateUserAccount({
 						userName: userName?.toLowerCase(),
 						location: location?.toLowerCase(),
 						displayName: displayName?.toLowerCase(),
+						image: "",
+						background: {
+							type: bgType.toLowerCase(),
+							value: bgValue?.toString(),
+						},
 						bio: bio?.toLowerCase(),
 					},
 					{ upsert: true }

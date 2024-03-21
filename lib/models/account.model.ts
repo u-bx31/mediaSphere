@@ -8,6 +8,11 @@ const accountSchema = new mongoose.Schema({
 		required: true,
 	},
 	displayName: { type: String, min: 1 },
+	image: { type: String },
+	background: {
+		type: { type: String, required: true },
+		value: { type: String, required: true },
+	},
 	location: { type: String, min: 1 },
 	bio: { type: String, min: 1 },
 	createdAt: { type: Date, default: Date.now },

@@ -16,7 +16,7 @@ import SubmitButton from "../shared/SubmitButton";
 import { AccountValidation } from "@/lib/validations/account";
 import { Textarea } from "@/components/ui/textarea";
 import { UpdateUserAccount } from "@/lib/actions/account.action";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	Image,
 	ImagePlus,
@@ -25,20 +25,30 @@ import {
 	SwatchBook,
 } from "lucide-react";
 import { ComboboxDemo } from "../ui/combobox";
+import ColorPicker from "../shared/ColorPicker";
+import ImageUpload from "../shared/ImageUpload";
 
 const ProfileForm = ({ user, account }: any) => {
-	const [loading, setLoading] = useState(true);
-	const [darkColors, setDarkColors] = useState(false);
 	const currentUser = JSON.parse(user);
 	const currentAccount = JSON.parse(account);
-	const [value, setValue] = useState("");
+
+	const [loading, setLoading] = useState(true);
+	const [darkColors, setDarkColors] = useState(false);
+	const inputRef = useRef(null);
+
+	const [backgroundType, setBackgroundType] = useState(
+		currentAccount.background.type || ""
+	);
+	const [backgroundValue, setBackgroundValue] = useState(
+		currentAccount.background.value || ""
+	);
 
 	//FIXME: change loading to be server side
 	useEffect(() => {
-		if (currentAccount) {
+		if (currentAccount || currentUser) {
 			setLoading(false);
 		}
-	}, [currentAccount]);
+	}, [currentAccount, currentUser]);
 	const options = [
 		{
 			value: "color",
@@ -67,6 +77,8 @@ const ProfileForm = ({ user, account }: any) => {
 			userId: currentUser?.id,
 			userName: data.userName?.toString(),
 			displayName: data.displayName?.toString(),
+			bgType: backgroundType,
+			bgValue: backgroundValue,
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 		});
@@ -88,54 +100,31 @@ const ProfileForm = ({ user, account }: any) => {
 			)}
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
-					<div className="w-full bg-gray-200 h-40 md:h-52 relative">
+					<div
+						style={{ backgroundColor: backgroundValue || "#f0f0f0" }}
+						className="w-full h-40 md:h-52 relative transition-all ease-linear">
 						<ComboboxDemo
 							className="!w-[100px]"
 							buttonClassName="!w-[50px] absolute top-2 right-2 !rounded-full"
 							options={options}
-							value={value}
-							setValue={setValue}
+							value={backgroundType}
+							setValue={setBackgroundType}
 						/>
 
-						{value && (
-							<div className="!w-[40px] !h-[35px] absolute top-14 right-2 !rounded-full bg-white overflow-hidden text-center shadow-sm">
-								<div className="relative w-full h-full ">
-									{value == "color" ? (
-										//color picker
-										<>
-											<label htmlFor="colorPicker">
-												<PenLineIcon
-													className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  ${
-														darkColors ? "stroke-white" : "stroke-black "
-													} z-10`}
-												/>
-											</label>
-											<input
-												name="colorPicker"
-												id="colorPicker"
-												type="color"
-												className="absolute w-100 h-[50px] -top-1 -left-1 z-0  bg-transparent "
-												onChange={(e: any) => {
-													console.log(e);
-													if (e?.target.value === "#000000") {
-														setDarkColors(true);
-													} else {
-														setDarkColors(false);
-													}
-												}}
-											/>
-										</>
-									) : (
-										<>
-											<label htmlFor="uploadImg">
-												<ImagePlus
-													className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  stroke-black z-10`}
-												/>
-											</label>
-											<input id="uploadImg" name="uploadImg" type="file" className="hidden" />
-										</>
-									)}
-								</div>
+						{backgroundType && (
+							<div className="!w-[40px] !h-[35px] absolute top-14 right-2 !rounded-full bg-white overflow-hidden text-center shadow-sm border-white border-2 cursor-pointer hover:bg-white/80 hover:border-white/60">
+								{backgroundType === "color" ? (
+									// Color Picker
+									<ColorPicker
+										darkColors={darkColors}
+										backgroundValue={backgroundValue}
+										currentAccount={currentAccount}
+										setBackgroundValue={setBackgroundValue}
+									/>
+								) : (
+									// Image Upload
+									<ImageUpload />
+								)}
 							</div>
 						)}
 					</div>
