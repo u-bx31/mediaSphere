@@ -11,7 +11,7 @@ const ColorPicker = ({
 
 	return (
 		<div className="relative w-full h-full">
-			<button
+			<button type="button"
 				className="!w-[40px] !h-[35px]"
 				onClick={() => inputRef.current?.click()}>
 				<PenLineIcon

@@ -27,6 +27,7 @@ import {
 import { ComboboxDemo } from "../ui/combobox";
 import ColorPicker from "../shared/ColorPicker";
 import ImageUpload from "../shared/ImageUpload";
+import { toast } from "../ui/use-toast";
 
 const ProfileForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
@@ -87,6 +88,12 @@ const ProfileForm = ({ user, account }: any) => {
 			form.control.setError("userName", {
 				type: "manual",
 				message: res?.message,
+			});
+		} else {
+			toast({
+				title: "Successfully saved new changes",
+				variant: "default",
+				icon: true,
 			});
 		}
 	}
