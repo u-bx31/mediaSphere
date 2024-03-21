@@ -20,15 +20,18 @@ import {
 
 export function ComboboxDemo({
 	options,
+	value,
+	setValue,
 	className,
 	buttonClassName,
 }: {
 	className?: string;
+	value?: string;
+	setValue?: any;
 	buttonClassName?: string;
 	options: { label: string; value: string; icon: any }[];
 }) {
 	const [open, setOpen] = React.useState(false);
-	const [value, setValue] = React.useState("");
 
 	const currentOptions = options || [];
 	return (
@@ -47,7 +50,7 @@ export function ComboboxDemo({
 					)}
 				</Button>
 			</PopoverTrigger>
-			<PopoverContent className={`w-[200px] p-0 ${className}`}>
+			<PopoverContent className={`w-[200px] p-0 ${className} z-10`}>
 				<Command>
 					<CommandGroup>
 						{currentOptions &&
@@ -57,7 +60,8 @@ export function ComboboxDemo({
 										key={option.value}
 										value={option.value}
 										onSelect={(currentValue) => {
-											setValue(currentValue === value ? "" : currentValue);
+											console.log(value);
+											setValue(currentValue);
 											setOpen(false);
 										}}>
 										<div className="flex flex-row gap-2">

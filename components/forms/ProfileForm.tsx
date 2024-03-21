@@ -17,13 +17,22 @@ import { AccountValidation } from "@/lib/validations/account";
 import { Textarea } from "@/components/ui/textarea";
 import { UpdateUserAccount } from "@/lib/actions/account.action";
 import { useEffect, useState } from "react";
-import { ImagePlus, Loader2Icon, SwatchBook } from "lucide-react";
+import {
+	Image,
+	ImagePlus,
+	Loader2Icon,
+	PenLineIcon,
+	SwatchBook,
+} from "lucide-react";
 import { ComboboxDemo } from "../ui/combobox";
 
 const ProfileForm = ({ user, account }: any) => {
 	const [loading, setLoading] = useState(true);
+	const [darkColors, setDarkColors] = useState(false);
 	const currentUser = JSON.parse(user);
 	const currentAccount = JSON.parse(account);
+	const [value, setValue] = useState("");
+
 	//FIXME: change loading to be server side
 	useEffect(() => {
 		if (currentAccount) {
@@ -39,7 +48,7 @@ const ProfileForm = ({ user, account }: any) => {
 		{
 			value: "image",
 			label: "Image",
-			icon: <ImagePlus className="w-5 h-5 stroke-black" />,
+			icon: <Image className="w-5 h-5 stroke-black" />,
 		},
 	];
 
@@ -81,10 +90,54 @@ const ProfileForm = ({ user, account }: any) => {
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div className="w-full bg-gray-200 h-40 md:h-52 relative">
 						<ComboboxDemo
-						className="!w-[100px]"
+							className="!w-[100px]"
 							buttonClassName="!w-[50px] absolute top-2 right-2 !rounded-full"
 							options={options}
+							value={value}
+							setValue={setValue}
 						/>
+
+						{value && (
+							<div className="!w-[40px] !h-[35px] absolute top-14 right-2 !rounded-full bg-white overflow-hidden text-center shadow-sm">
+								<div className="relative w-full h-full ">
+									{value == "color" ? (
+										//color picker
+										<>
+											<label htmlFor="colorPicker">
+												<PenLineIcon
+													className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  ${
+														darkColors ? "stroke-white" : "stroke-black "
+													} z-10`}
+												/>
+											</label>
+											<input
+												name="colorPicker"
+												id="colorPicker"
+												type="color"
+												className="absolute w-100 h-[50px] -top-1 -left-1 z-0  bg-transparent "
+												onChange={(e: any) => {
+													console.log(e);
+													if (e?.target.value === "#000000") {
+														setDarkColors(true);
+													} else {
+														setDarkColors(false);
+													}
+												}}
+											/>
+										</>
+									) : (
+										<>
+											<label htmlFor="uploadImg">
+												<ImagePlus
+													className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  stroke-black z-10`}
+												/>
+											</label>
+											<input id="uploadImg" name="uploadImg" type="file" className="hidden" />
+										</>
+									)}
+								</div>
+							</div>
+						)}
 					</div>
 					<div className="flex items-center justify-center -translate-y-9  md:-translate-y-12">
 						<div className="bg-gray-200 h-24 w-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-md">
