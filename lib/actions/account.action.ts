@@ -71,12 +71,14 @@ export async function UpdateUserAccount({
 	displayName,
 	bgType,
 	bgValue,
+	avatar,
 	bio,
 	path,
 }: {
 	userId: string;
 	userName: string;
 	displayName: string;
+	avatar: string;
 	bgType: string;
 	bgValue: string;
 	location?: string;
@@ -103,7 +105,7 @@ export async function UpdateUserAccount({
 						userName: userName?.toLowerCase(),
 						location: location?.toLowerCase(),
 						displayName: displayName?.toLowerCase(),
-						image: "",
+						image: avatar.toLocaleLowerCase(),
 						background: {
 							type: bgType.toLowerCase(),
 							value: bgValue?.toString(),

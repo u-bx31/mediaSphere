@@ -1,8 +1,8 @@
 import { ChangeEvent } from "react";
-import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { FormControl } from "../ui/form";
 import { Input } from "../ui/input";
 
-const ImageUpload = ({ setFiles, field }: any) => {
+const ImageUpload = ({ setFiles, field,action }: any) => {
 	const handleImage = (
 		e: ChangeEvent<HTMLInputElement>,
 		fieldChange: (value: string) => void
@@ -29,7 +29,7 @@ const ImageUpload = ({ setFiles, field }: any) => {
 					type="file"
 					placeholder="Upload your profile image"
 					accept="image/*"
-					onChange={(e) => handleImage(e, field.onChange)}
+					onChange={(e) => handleImage(e, action)}
 				/>
 			</FormControl>
 		</>

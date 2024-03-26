@@ -30,16 +30,16 @@ import { ComboboxDemo } from "../ui/combobox";
 import ColorPicker from "../shared/ColorPicker";
 import ImageUpload from "../shared/ImageUpload";
 import { toast } from "../ui/use-toast";
+import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const ProfileForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
 	const currentAccount = JSON.parse(account);
 
 	const [loading, setLoading] = useState(true);
-
-	const [bgImage, setBgImage] = useState();
-	const [avatar, setAvatar] = useState();
-
+	const [bgImage, setBgImage] = useState<File[]>([]);
+	const [avatar, setAvatar] = useState<File[]>([]);
 	const [darkColors, setDarkColors] = useState(false);
 
 	const [backgroundType, setBackgroundType] = useState(
@@ -48,13 +48,13 @@ const ProfileForm = ({ user, account }: any) => {
 	const [backgroundValue, setBackgroundValue] = useState(
 		currentAccount.background.value || ""
 	);
+	const { startUpload } = useUploadThing('imageUploader');
 
 	//FIXME: change loading to be server side
 	useEffect(() => {
 		if (currentAccount || currentUser) {
 			setLoading(false);
 		}
-		console.log(currentAccount);
 	}, [currentAccount, currentUser]);
 	const options = [
 		{
@@ -81,17 +81,29 @@ const ProfileForm = ({ user, account }: any) => {
 	});
 
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
+		const blob = data.avatar?.toString();
+
+		const hasImageChanged = isBase64Image(blob || '');
+
+		if (hasImageChanged) {
+			const imgRes = await startUpload(avatar);
+			console.log('imgres',imgRes);
+			if (imgRes && imgRes[0].url) {
+				data.avatar = imgRes[0].url;
+			}
+		}
+
 		const res = await UpdateUserAccount({
 			userId: currentUser?.id,
 			userName: data.userName?.toString(),
 			displayName: data.displayName?.toString(),
 			bgType: backgroundType,
+			avatar: data.avatar?.toString() || "",
 			bgValue: backgroundValue,
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 		});
 		if (res?.message) {
-			console.log();
 			form.control.setError("userName", {
 				type: "manual",
 				message: res?.message,
@@ -117,14 +129,14 @@ const ProfileForm = ({ user, account }: any) => {
 					<div
 						style={{ backgroundColor: backgroundValue || "#f0f0f0" }}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
+						{/* FIXME: fix state */}
 						{backgroundType == "image" && (
 							<div className="bg-gray-400 !w-full !h-full">
 								<Image
-									src={bgImage ? bgImage : "/assets/svgs/profile.svg"}
+									src={ "/assets/svgs/profile.svg"}
 									alt="avatar"
 									width={86}
 									height={86}
-									priority={bgImage != ""}
 									className={` ${
 										bgImage
 											? "object-cover !w-full !h-full"
@@ -165,7 +177,12 @@ const ProfileForm = ({ user, account }: any) => {
 														className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-black z-10`}
 													/>
 												</FormLabel>
-												<ImageUpload setFiles={setBgImage} form={form} filed={field} />
+												<ImageUpload
+													setFiles={setBgImage}
+													form={form}
+													filed={field}
+													action={field.onChange}
+												/>
 											</FormItem>
 										)}
 									/>
@@ -173,7 +190,8 @@ const ProfileForm = ({ user, account }: any) => {
 							</div>
 						)}
 					</div>
-					{/* avatar card */}
+
+					{/* Start avatarCard */}
 					<div className="flex items-center justify-center -translate-y-9  md:-translate-y-12">
 						<FormField
 							control={form.control}
@@ -181,6 +199,7 @@ const ProfileForm = ({ user, account }: any) => {
 							render={({ field }) => (
 								<FormItem className="flex items-center justify-center">
 									<FormLabel className="bg-gray-200 h-24 w-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-md relative group cursor-pointer">
+										{/* TODO: lazy load the image */}
 										<Image
 											src={field.value ? field.value : "/assets/svgs/profile.svg"}
 											alt="avatar"
@@ -195,12 +214,18 @@ const ProfileForm = ({ user, account }: any) => {
 											<PlusCircleIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-gray-900 stroke-2  " />
 										</div>
 									</FormLabel>
-									<ImageUpload setFiles={setBgImage} form={form} filed={field} />
+									<ImageUpload
+										setFiles={setAvatar}
+										form={form}
+										filed={field}
+										action={field.onChange}
+									/>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 					</div>
+					{/* End avatarCard */}
 					<div className="flex flex-col gap-3 !pt-0 p-5 md:px-10">
 						<FormField
 							control={form.control}
@@ -208,7 +233,7 @@ const ProfileForm = ({ user, account }: any) => {
 							render={({ field }) => {
 								return (
 									<FormItem>
-										<FormLabel>UserName</FormLabel>
+										<FormLabel className="font-semibold">UserName</FormLabel>
 										<FormControl>
 											<Input
 												className="w-full text-start p-4 "
@@ -216,7 +241,7 @@ const ProfileForm = ({ user, account }: any) => {
 												{...field}
 											/>
 										</FormControl>
-										<FormMessage aria-errormessage={"sda"} />
+										<FormMessage />
 									</FormItem>
 								);
 							}}
@@ -226,7 +251,7 @@ const ProfileForm = ({ user, account }: any) => {
 							name="displayName"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>DisplayName</FormLabel>
+									<FormLabel className="font-semibold">DisplayName</FormLabel>
 									<FormControl>
 										<Input
 											className="w-full text-start p-4 "
@@ -243,7 +268,7 @@ const ProfileForm = ({ user, account }: any) => {
 							name="location"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Location</FormLabel>
+									<FormLabel className="font-semibold">Location</FormLabel>
 									<FormControl>
 										<Input
 											className="w-full text-start p-4 "
@@ -260,7 +285,7 @@ const ProfileForm = ({ user, account }: any) => {
 							name="bio"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>bio</FormLabel>
+									<FormLabel className="font-semibold">bio</FormLabel>
 									<FormControl>
 										<Textarea rows={5} placeholder="Type your message here." {...field} />
 									</FormControl>

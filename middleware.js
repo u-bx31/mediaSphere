@@ -10,6 +10,7 @@ export default authMiddleware({
 		"/contacts",
 		"/api/webhook/clerk",
 		"/not-found",
+		"/api/uploadthing"
 	],
 	ignoredRoutes: ["/api/webhook/clerk"],
 });
