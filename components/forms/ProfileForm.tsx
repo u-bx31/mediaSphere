@@ -8,6 +8,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,10 +19,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { UpdateUserAccount } from "@/lib/actions/account.action";
 import { useEffect, useRef, useState } from "react";
 import {
-	Image,
+	ImageIcon,
 	ImagePlus,
 	Loader2Icon,
 	PenLineIcon,
+	PlusCircleIcon,
 	SwatchBook,
 } from "lucide-react";
 import { ComboboxDemo } from "../ui/combobox";
@@ -34,8 +36,11 @@ const ProfileForm = ({ user, account }: any) => {
 	const currentAccount = JSON.parse(account);
 
 	const [loading, setLoading] = useState(true);
+
+	const [bgImage, setBgImage] = useState();
+	const [avatar, setAvatar] = useState();
+
 	const [darkColors, setDarkColors] = useState(false);
-	const inputRef = useRef(null);
 
 	const [backgroundType, setBackgroundType] = useState(
 		currentAccount.background.type || ""
@@ -49,6 +54,7 @@ const ProfileForm = ({ user, account }: any) => {
 		if (currentAccount || currentUser) {
 			setLoading(false);
 		}
+		console.log(currentAccount);
 	}, [currentAccount, currentUser]);
 	const options = [
 		{
@@ -59,7 +65,7 @@ const ProfileForm = ({ user, account }: any) => {
 		{
 			value: "image",
 			label: "Image",
-			icon: <Image className="w-5 h-5 stroke-black" />,
+			icon: <ImageIcon className="w-5 h-5 stroke-black" />,
 		},
 	];
 
@@ -67,6 +73,7 @@ const ProfileForm = ({ user, account }: any) => {
 		resolver: zodResolver(AccountValidation),
 		defaultValues: {
 			userName: currentAccount?.userName || "",
+			avatar: currentAccount?.image || currentUser?.image || "",
 			displayName: currentAccount?.displayName || "",
 			location: currentAccount?.location || "",
 			bio: currentAccount?.bio || "",
@@ -110,6 +117,23 @@ const ProfileForm = ({ user, account }: any) => {
 					<div
 						style={{ backgroundColor: backgroundValue || "#f0f0f0" }}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
+						{backgroundType == "image" && (
+							<div className="bg-gray-400 !w-full !h-full">
+								<Image
+									src={bgImage ? bgImage : "/assets/svgs/profile.svg"}
+									alt="avatar"
+									width={86}
+									height={86}
+									priority={bgImage != ""}
+									className={` ${
+										bgImage
+											? "object-cover !w-full !h-full"
+											: "!w-12 !h-12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+									}  `}
+								/>
+							</div>
+						)}
+
 						<ComboboxDemo
 							className="!w-[100px]"
 							buttonClassName="!w-[50px] absolute top-2 right-2 !rounded-full"
@@ -118,6 +142,7 @@ const ProfileForm = ({ user, account }: any) => {
 							setValue={setBackgroundType}
 						/>
 
+						{/* bg picker */}
 						{backgroundType && (
 							<div className="!w-[40px] !h-[35px] absolute top-14 right-2 !rounded-full bg-white overflow-hidden text-center shadow-sm border-white border-2 cursor-pointer hover:bg-white/80 hover:border-white/60">
 								{backgroundType === "color" ? (
@@ -130,15 +155,51 @@ const ProfileForm = ({ user, account }: any) => {
 									/>
 								) : (
 									// Image Upload
-									<ImageUpload />
+									<FormField
+										control={form.control}
+										name="bg_image"
+										render={({ field }) => (
+											<FormItem className="flex flex-col items-center">
+												<FormLabel className="!w-[40px] !h-[35px] relative group cursor-pointer">
+													<ImagePlus
+														className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-black z-10`}
+													/>
+												</FormLabel>
+												<ImageUpload setFiles={setBgImage} form={form} filed={field} />
+											</FormItem>
+										)}
+									/>
 								)}
 							</div>
 						)}
 					</div>
+					{/* avatar card */}
 					<div className="flex items-center justify-center -translate-y-9  md:-translate-y-12">
-						<div className="bg-gray-200 h-24 w-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-md">
-							av
-						</div>
+						<FormField
+							control={form.control}
+							name="avatar"
+							render={({ field }) => (
+								<FormItem className="flex items-center justify-center">
+									<FormLabel className="bg-gray-200 h-24 w-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-md relative group cursor-pointer">
+										<Image
+											src={field.value ? field.value : "/assets/svgs/profile.svg"}
+											alt="avatar"
+											width={86}
+											height={86}
+											priority={field.value != ""}
+											className={`${
+												field?.value ? "rounded-full !w-full !h-full" : "!w-12 !h-12"
+											} object-cover `}
+										/>
+										<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full rounded-full hidden group-hover:block group-hover:bg-gray-400 group-hover:bg-opacity-[60%] ">
+											<PlusCircleIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-gray-900 stroke-2  " />
+										</div>
+									</FormLabel>
+									<ImageUpload setFiles={setBgImage} form={form} filed={field} />
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 					<div className="flex flex-col gap-3 !pt-0 p-5 md:px-10">
 						<FormField

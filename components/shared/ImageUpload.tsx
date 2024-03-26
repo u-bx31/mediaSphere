@@ -1,22 +1,37 @@
-import { ImagePlus } from "lucide-react";
-import { useRef } from "react";
+import { ChangeEvent } from "react";
+import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { Input } from "../ui/input";
 
-const ImageUpload = () => {
-	const inputRef = useRef<HTMLInputElement>(null);
+const ImageUpload = ({ setFiles, field }: any) => {
+	const handleImage = (
+		e: ChangeEvent<HTMLInputElement>,
+		fieldChange: (value: string) => void
+	) => {
+		e.preventDefault();
+		const fileReader = new FileReader();
+
+		if (e.target.files && e.target.files.length > 0) {
+			const file = e.target.files[0];
+			setFiles(Array.from(e.target.files));
+			if (!file.type.includes("image")) return;
+			fileReader.onload = async (e) => {
+				const imageDataUrl = e.target?.result?.toString() || "";
+				fieldChange(imageDataUrl);
+			};
+			fileReader.readAsDataURL(file);
+		}
+	};
 	return (
 		<>
-			<button type="button" className="!w-[40px] !h-[35px]" onClick={() => inputRef.current?.click()}>
-				<ImagePlus
-					className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-black z-10`}
+			<FormControl>
+				<Input
+					className="account-form_image-input hidden"
+					type="file"
+					placeholder="Upload your profile image"
+					accept="image/*"
+					onChange={(e) => handleImage(e, field.onChange)}
 				/>
-			</button>
-			<input
-				ref={inputRef}
-				id="uploadImg"
-				name="uploadImg"
-				type="file"
-				className="hidden"
-			/>
+			</FormControl>
 		</>
 	);
 };
