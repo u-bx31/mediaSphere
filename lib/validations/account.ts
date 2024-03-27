@@ -5,7 +5,7 @@ export const AccountValidation = z.object({
 	displayName: z.string().min(2,{ message: "Display can not be empty Minimum 2 characters" }).max(30),
 	avatar: z.string().url().optional(),
 	bg_image : z.string().url().optional(),
-	bg_color : z.string().url().optional(),
+	bg_color : z.string().optional(),
 	location: z.string().max(30).optional(),
 	bio: z.string().max(30000).optional(),
 });

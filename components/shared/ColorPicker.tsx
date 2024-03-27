@@ -24,7 +24,7 @@ const ColorPicker = ({
 				id="colorPicker"
 				type="color"
 				className="absolute w-100 h-[50px] -top-1 -left-1 -z-10 bg-transparent"
-				value={backgroundValue || currentAccount.background.value || "#f0f0f0"}
+				value={backgroundValue || currentAccount.background.value }
 				onChange={(e) => {
 					setBackgroundValue(e.target.value);
 				}}

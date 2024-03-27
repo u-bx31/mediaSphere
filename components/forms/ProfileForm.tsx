@@ -38,25 +38,25 @@ const ProfileForm = ({ user, account }: any) => {
 	const currentAccount = JSON.parse(account);
 
 	const [loading, setLoading] = useState(true);
-	const [bgImage, setBgImage] = useState(currentAccount?.background.value || "");
+	const [bgImage, setBgImage] = useState(
+		currentAccount.background.type == "image" && currentAccount.background.value
+	);
 	const [bgImageFile, setBgImageFile] = useState<File[]>([]);
 	const [avatar, setAvatar] = useState<File[]>([]);
-	const [darkColors, setDarkColors] = useState(false);
 
 	const [backgroundType, setBackgroundType] = useState(
-		currentAccount.background.type || ""
+		currentAccount.background.type
 	);
-	const [backgroundValue, setBackgroundValue] = useState(
-		currentAccount.background.value || "#f0f0f0"
-	);
+	const [bgColorValue, setBgColorValue] = useState();
 	const { startUpload } = useUploadThing("imageUploader");
 
 	//FIXME: change loading to be server side
 	useEffect(() => {
+		setBackgroundType(currentAccount.background.type);
 		if (currentAccount || currentUser) {
 			setLoading(false);
 		}
-	}, [currentAccount, currentUser]);
+	}, []);
 	const options = [
 		{
 			value: "color",
@@ -69,13 +69,17 @@ const ProfileForm = ({ user, account }: any) => {
 			icon: <ImageIcon className="w-5 h-5 stroke-black" />,
 		},
 	];
-
 	const form = useForm<z.infer<typeof AccountValidation>>({
 		resolver: zodResolver(AccountValidation),
 		defaultValues: {
 			userName: currentAccount?.userName || "",
 			avatar: currentAccount?.image || currentUser?.image || "",
-			bg_image: currentAccount.background.value || "",
+			bg_image:
+				currentAccount.background.type === "image" &&
+				currentAccount.background.value || '',
+			bg_color:
+				currentAccount.background.type === "color" &&
+				currentAccount.background.value || '#f0f0f0',
 			displayName: currentAccount?.displayName || "",
 			location: currentAccount?.location || "",
 			bio: currentAccount?.bio || "",
@@ -109,13 +113,17 @@ const ProfileForm = ({ user, account }: any) => {
 			}
 		}
 
+		{
+			/* 3 TODO: Save the background value on session or on cookies  */
+		}
 		const res = await UpdateUserAccount({
 			userId: currentUser?.id,
 			userName: data.userName?.toString(),
 			displayName: data.displayName?.toString(),
-			bgType: backgroundType,
+			bgType: backgroundType || "color",
 			avatar: data.avatar?.toString() || "",
-			bgValue: data.bg_image || backgroundValue,
+			bgValue:
+				(backgroundType === "image" && data.bg_image) || "" || bgColorValue || "",
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 		});
@@ -143,7 +151,9 @@ const ProfileForm = ({ user, account }: any) => {
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div
-						style={{ backgroundColor: backgroundValue || "#f0f0f0" }}
+						style={{
+							backgroundColor: bgColorValue || form.formState.defaultValues?.bg_color,
+						}}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
 						{/* Banner option :Image */}
 						{backgroundType == "image" && (
@@ -173,14 +183,33 @@ const ProfileForm = ({ user, account }: any) => {
 
 						{/* bg picker */}
 						{backgroundType && (
-							<div className="!w-[40px] !h-[35px] absolute top-14 right-2 !rounded-full bg-white overflow-hidden text-center shadow-sm border-white border-2 cursor-pointer hover:bg-white/80 hover:border-white/60">
+							<div className="!w-[40px] !h-[35px] absolute top-14 right-2 !rounded-full bg-white overflow-hidden text-center shadow-sm border-gray-200 border-2 cursor-pointer hover:bg-white/80 ">
 								{backgroundType === "color" ? (
 									// Color Picker
-									<ColorPicker
-										darkColors={darkColors}
-										backgroundValue={backgroundValue}
-										currentAccount={currentAccount}
-										setBackgroundValue={setBackgroundValue}
+									<FormField
+										control={form.control}
+										name="bg_color"
+										render={({ field }) => {
+											return (
+												<FormItem className="flex flex-col  items-center">
+													<FormLabel className="!w-[40px] !h-[35px] relative group cursor-pointer">
+														<PenLineIcon
+															className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-black z-0`}
+														/>
+													</FormLabel>
+													<FormControl>
+														<Input
+															type="color"
+															className="absolute w-100 h-[10px] -top-1 -left-1 -z-10 bg-transparent"
+															{...field}
+															onChange={(e: any) => {
+																setBgColorValue((prevColor) => e.target.value);
+															}}
+														/>
+													</FormControl>
+												</FormItem>
+											);
+										}}
 									/>
 								) : (
 									// Image Upload
