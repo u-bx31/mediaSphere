@@ -38,7 +38,8 @@ const ProfileForm = ({ user, account }: any) => {
 	const currentAccount = JSON.parse(account);
 
 	const [loading, setLoading] = useState(true);
-	const [bgImage, setBgImage] = useState<File[]>([]);
+	const [bgImage, setBgImage] = useState(currentAccount?.background.value || "");
+	const [bgImageFile, setBgImageFile] = useState<File[]>([]);
 	const [avatar, setAvatar] = useState<File[]>([]);
 	const [darkColors, setDarkColors] = useState(false);
 
@@ -46,9 +47,9 @@ const ProfileForm = ({ user, account }: any) => {
 		currentAccount.background.type || ""
 	);
 	const [backgroundValue, setBackgroundValue] = useState(
-		currentAccount.background.value || ""
+		currentAccount.background.value || "#f0f0f0"
 	);
-	const { startUpload } = useUploadThing('imageUploader');
+	const { startUpload } = useUploadThing("imageUploader");
 
 	//FIXME: change loading to be server side
 	useEffect(() => {
@@ -74,6 +75,7 @@ const ProfileForm = ({ user, account }: any) => {
 		defaultValues: {
 			userName: currentAccount?.userName || "",
 			avatar: currentAccount?.image || currentUser?.image || "",
+			bg_image: currentAccount.background.value || "",
 			displayName: currentAccount?.displayName || "",
 			location: currentAccount?.location || "",
 			bio: currentAccount?.bio || "",
@@ -82,14 +84,28 @@ const ProfileForm = ({ user, account }: any) => {
 
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
 		const blob = data.avatar?.toString();
+		const blob2 = data.bg_image?.toString();
 
-		const hasImageChanged = isBase64Image(blob || '');
+		const hasImageChanged = isBase64Image(blob || "");
+		const hasBgImageChanged = isBase64Image(blob2 || "");
+
+		{
+			/* 1 FIXME: fix this to show loading state until upload the image than save  */
+		}
+		{
+			/* 2 FIXME: fix problem when upload file and save than we change input.value and save it will upload another file  */
+		}
 
 		if (hasImageChanged) {
 			const imgRes = await startUpload(avatar);
-			console.log('imgres',imgRes);
 			if (imgRes && imgRes[0].url) {
 				data.avatar = imgRes[0].url;
+			}
+		}
+		if (hasBgImageChanged) {
+			const imgRes = await startUpload(bgImageFile);
+			if (imgRes && imgRes[0].url) {
+				data.bg_image = imgRes[0].url;
 			}
 		}
 
@@ -99,7 +115,7 @@ const ProfileForm = ({ user, account }: any) => {
 			displayName: data.displayName?.toString(),
 			bgType: backgroundType,
 			avatar: data.avatar?.toString() || "",
-			bgValue: backgroundValue,
+			bgValue: data.bg_image || backgroundValue,
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 		});
@@ -129,17 +145,18 @@ const ProfileForm = ({ user, account }: any) => {
 					<div
 						style={{ backgroundColor: backgroundValue || "#f0f0f0" }}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
-						{/* FIXME: fix state */}
+						{/* Banner option :Image */}
 						{backgroundType == "image" && (
 							<div className="bg-gray-400 !w-full !h-full">
 								<Image
-									src={ "/assets/svgs/profile.svg"}
+									src={bgImage ? bgImage : "/assets/svgs/profile.svg"}
 									alt="avatar"
-									width={86}
-									height={86}
+									width={1980}
+									height={800}
+									priority={bgImage != ""}
 									className={` ${
 										bgImage
-											? "object-cover !w-full !h-full"
+											? "object-cover !w-fu1ll !h-full"
 											: "!w-12 !h-12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
 									}  `}
 								/>
@@ -170,21 +187,23 @@ const ProfileForm = ({ user, account }: any) => {
 									<FormField
 										control={form.control}
 										name="bg_image"
-										render={({ field }) => (
-											<FormItem className="flex flex-col items-center">
-												<FormLabel className="!w-[40px] !h-[35px] relative group cursor-pointer">
-													<ImagePlus
-														className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-black z-10`}
+										render={({ field }) => {
+											return (
+												<FormItem className="flex flex-col items-center">
+													<FormLabel className="!w-[40px] !h-[35px] relative group cursor-pointer">
+														<ImagePlus
+															className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-black z-0`}
+														/>
+													</FormLabel>
+													<ImageUpload
+														setBg={setBgImage}
+														setFiles={setBgImageFile}
+														form={form}
+														action={field.onChange}
 													/>
-												</FormLabel>
-												<ImageUpload
-													setFiles={setBgImage}
-													form={form}
-													filed={field}
-													action={field.onChange}
-												/>
-											</FormItem>
-										)}
+												</FormItem>
+											);
+										}}
 									/>
 								)}
 							</div>
@@ -217,7 +236,6 @@ const ProfileForm = ({ user, account }: any) => {
 									<ImageUpload
 										setFiles={setAvatar}
 										form={form}
-										filed={field}
 										action={field.onChange}
 									/>
 									<FormMessage />

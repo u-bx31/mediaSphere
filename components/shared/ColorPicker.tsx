@@ -15,9 +15,7 @@ const ColorPicker = ({
 				className="!w-[40px] !h-[35px]"
 				onClick={() => inputRef.current?.click()}>
 				<PenLineIcon
-					className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
-						darkColors ? "stroke-white" : "stroke-black"
-					} z-0`}
+					className={`w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-black z-0`}
 				/>
 			</button>
 			<input

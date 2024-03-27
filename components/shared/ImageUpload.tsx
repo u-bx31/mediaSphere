@@ -2,7 +2,7 @@ import { ChangeEvent } from "react";
 import { FormControl } from "../ui/form";
 import { Input } from "../ui/input";
 
-const ImageUpload = ({ setFiles, field,action }: any) => {
+const ImageUpload = ({ setFiles, setBg, field, action }: any) => {
 	const handleImage = (
 		e: ChangeEvent<HTMLInputElement>,
 		fieldChange: (value: string) => void
@@ -17,6 +17,7 @@ const ImageUpload = ({ setFiles, field,action }: any) => {
 			fileReader.onload = async (e) => {
 				const imageDataUrl = e.target?.result?.toString() || "";
 				fieldChange(imageDataUrl);
+				setBg(imageDataUrl);
 			};
 			fileReader.readAsDataURL(file);
 		}
