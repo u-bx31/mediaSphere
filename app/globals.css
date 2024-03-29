@@ -78,17 +78,18 @@
 			rgba(125, 241, 197, 1) 0%,
 			rgba(255, 255, 255, 1) 100%
 		);
+		min-width: 280px;
 	}
+
 	.font-outline-4 {
-    -webkit-text-stroke: 1px black;
-  }
+		-webkit-text-stroke: 1px black;
+	}
 }
 @layer components {
 	.navbar-class {
-		@apply container h-[60px] md:h-full w-full bg-white bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-30  !px-2 md:!px-5 lg:sticky top-1  rounded-full z-50 shadow-sm mt-2 ;
+		@apply container h-[60px] md:h-full w-full bg-white bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-30  !px-2 md:!px-5 lg:sticky top-1  rounded-full z-50 shadow-sm mt-2;
 	}
 }
-
 
 .ham {
 	cursor: pointer;
@@ -126,4 +127,3 @@
 .ham4.active .bottom {
 	stroke-dashoffset: -68px;
 }
-

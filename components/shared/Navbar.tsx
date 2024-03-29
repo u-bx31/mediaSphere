@@ -28,6 +28,11 @@ const Navbar = ({ user }: any) => {
 	const currentUser = JSON.parse(user);
 	const { push } = useRouter();
 	const pathname = usePathname();
+
+	{
+		/* TODO: validate the status of the account and put the value on href of profile section if 'complete' than we redirect to /profile */
+	}
+	
 	return (
 		<nav className="navbar-class">
 			<div
