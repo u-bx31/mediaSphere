@@ -44,15 +44,14 @@ const ProfileForm = ({ user, account }: any) => {
 	const [bgImageFile, setBgImageFile] = useState<File[]>([]);
 	const [avatar, setAvatar] = useState<File[]>([]);
 
-	const [backgroundType, setBackgroundType] = useState(
-		currentAccount.background?.type
+	const [backgroundType, setBackgroundType] = useState<string>(
+		currentAccount.background.type || "color"
 	);
 	const [bgColorValue, setBgColorValue] = useState();
 	const { startUpload } = useUploadThing("imageUploader");
 
-	//FIXME: change loading to be server side
 	useEffect(() => {
-		setBackgroundType(currentAccount.background?.type);
+		setBackgroundType(currentAccount.background.type);
 		if (currentAccount || currentUser) {
 			setLoading(false);
 		}
@@ -74,14 +73,6 @@ const ProfileForm = ({ user, account }: any) => {
 		defaultValues: {
 			userName: currentAccount?.userName || "",
 			avatar: currentAccount?.image || currentUser?.image || "",
-			bg_image:
-				(currentAccount.background?.type === "image" &&
-					currentAccount.background?.value) ||
-				"",
-			bg_color:
-				(currentAccount.background?.type === "color" &&
-					currentAccount.background?.value) ||
-				"#f0f0f0",
 			displayName: currentAccount?.displayName || "",
 			location: currentAccount?.location || "",
 			bio: currentAccount?.bio || "",
@@ -154,7 +145,7 @@ const ProfileForm = ({ user, account }: any) => {
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div
 						style={{
-							backgroundColor: bgColorValue || form.formState.defaultValues?.bg_color,
+							backgroundColor: bgColorValue || currentAccount.background.value,
 						}}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
 						{/* Banner option :Image */}
@@ -204,6 +195,7 @@ const ProfileForm = ({ user, account }: any) => {
 															type="color"
 															className="absolute w-100 h-[10px] -top-1 -left-1 -z-10 bg-transparent"
 															{...field}
+															defaultValue={currentAccount.background.value}
 															onChange={(e: any) => {
 																setBgColorValue((prevColor) => e.target.value);
 															}}
