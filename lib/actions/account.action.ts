@@ -10,15 +10,6 @@ interface AccountUserProps {
 	path?: string;
 }
 
-export async function fetchAccount(userId: string) {
-	ConnectionToDb();
-	try {
-		const user = await User.findOne({ id: userId });
-		return await Account.findOne({ createdBy: user?._id });
-	} catch (error: any) {
-		throw new Error(`Failed to fetch user :${error}`);
-	}
-}
 
 export async function findUserAccount(userId: string) {
 	ConnectionToDb();
@@ -29,7 +20,12 @@ export async function findUserAccount(userId: string) {
 		};
 	}
 	try {
-		return await Account.findOne({ createdBy: currentUser._id });
+		const data = await Account.findOne({ createdBy: currentUser?._id }).then(
+			(res) => {
+				return res;
+			}
+		);
+		return { data };
 	} catch (error: any) {
 		throw new Error(`Failed to fetch user :${error}`);
 	}

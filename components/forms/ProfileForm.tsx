@@ -39,20 +39,20 @@ const ProfileForm = ({ user, account }: any) => {
 
 	const [loading, setLoading] = useState(true);
 	const [bgImage, setBgImage] = useState(
-		currentAccount.background.type == "image" && currentAccount.background.value
+		currentAccount.background?.type == "image" && currentAccount.background?.value
 	);
 	const [bgImageFile, setBgImageFile] = useState<File[]>([]);
 	const [avatar, setAvatar] = useState<File[]>([]);
 
 	const [backgroundType, setBackgroundType] = useState(
-		currentAccount.background.type
+		currentAccount.background?.type
 	);
 	const [bgColorValue, setBgColorValue] = useState();
 	const { startUpload } = useUploadThing("imageUploader");
 
 	//FIXME: change loading to be server side
 	useEffect(() => {
-		setBackgroundType(currentAccount.background.type);
+		setBackgroundType(currentAccount.background?.type);
 		if (currentAccount || currentUser) {
 			setLoading(false);
 		}
@@ -75,11 +75,13 @@ const ProfileForm = ({ user, account }: any) => {
 			userName: currentAccount?.userName || "",
 			avatar: currentAccount?.image || currentUser?.image || "",
 			bg_image:
-				currentAccount.background.type === "image" &&
-				currentAccount.background.value || '',
+				(currentAccount.background?.type === "image" &&
+					currentAccount.background?.value) ||
+				"",
 			bg_color:
-				currentAccount.background.type === "color" &&
-				currentAccount.background.value || '#f0f0f0',
+				(currentAccount.background?.type === "color" &&
+					currentAccount.background?.value) ||
+				"#f0f0f0",
 			displayName: currentAccount?.displayName || "",
 			location: currentAccount?.location || "",
 			bio: currentAccount?.bio || "",
