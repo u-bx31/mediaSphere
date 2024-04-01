@@ -17,7 +17,9 @@ const ImageUpload = ({ setFiles, setBg, field, action }: any) => {
 			fileReader.onload = async (e) => {
 				const imageDataUrl = e.target?.result?.toString() || "";
 				fieldChange(imageDataUrl);
-				setBg(imageDataUrl);
+				if (setBg) {
+					setBg(imageDataUrl);
+				}
 			};
 			fileReader.readAsDataURL(file);
 		}

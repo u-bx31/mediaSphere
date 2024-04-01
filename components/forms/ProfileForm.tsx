@@ -27,11 +27,11 @@ import {
 	SwatchBook,
 } from "lucide-react";
 import { ComboboxDemo } from "../ui/combobox";
-import ColorPicker from "../shared/ColorPicker";
 import ImageUpload from "../shared/ImageUpload";
 import { toast } from "../ui/use-toast";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
+import { usePathname } from "next/navigation";
 
 const ProfileForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
@@ -49,7 +49,7 @@ const ProfileForm = ({ user, account }: any) => {
 	);
 	const [bgColorValue, setBgColorValue] = useState();
 	const { startUpload } = useUploadThing("imageUploader");
-
+	const path = usePathname();
 	useEffect(() => {
 		setBackgroundType(currentAccount.background.type);
 		if (currentAccount || currentUser) {
@@ -95,6 +95,7 @@ const ProfileForm = ({ user, account }: any) => {
 
 		if (hasImageChanged) {
 			const imgRes = await startUpload(avatar);
+			// TODO: add loading toast when uploading the image
 			if (imgRes && imgRes[0].url) {
 				data.avatar = imgRes[0].url;
 			}
@@ -119,6 +120,7 @@ const ProfileForm = ({ user, account }: any) => {
 				(backgroundType === "image" && data.bg_image) || "" || bgColorValue || "",
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
+			path: path,
 		});
 		if (res?.message) {
 			form.control.setError("userName", {
@@ -145,7 +147,11 @@ const ProfileForm = ({ user, account }: any) => {
 				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<div
 						style={{
-							backgroundColor: bgColorValue || currentAccount.background.value,
+							backgroundColor:
+								bgColorValue ||
+								(currentAccount.background.type == "color" &&
+									currentAccount.background.value) ||
+								"#f0f0f0",
 						}}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
 						{/* Banner option :Image */}

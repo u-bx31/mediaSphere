@@ -3,13 +3,13 @@
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import Account from "../models/account.model";
+import { revalidatePath } from "next/cache";
 
 interface AccountUserProps {
 	userId: string;
 	userName: string;
 	path?: string;
 }
-
 
 export async function findUserAccount(userId: string) {
 	ConnectionToDb();
@@ -79,7 +79,7 @@ export async function UpdateUserAccount({
 	bgValue: string;
 	location?: string;
 	bio?: string;
-	path?: string;
+	path: string;
 }) {
 	ConnectionToDb();
 	const user = await User.findOne({ id: userId });
@@ -110,6 +110,7 @@ export async function UpdateUserAccount({
 					},
 					{ upsert: true }
 				);
+				revalidatePath(path);
 			} else {
 				return {
 					message: "This user not found",
