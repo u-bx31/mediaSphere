@@ -82,22 +82,25 @@ const ProfileForm = ({ user, account }: any) => {
 		const hasBgImageChanged = isBase64Image(blob2 || "");
 
 		{
-			/* 1 FIXME: fix this to show loading state until upload the image than save  */
-		}
-		{
-			/* 2 FIXME: fix problem when upload file and save than we change input.value and save it will upload another file  */
+			/* FIXME: fix problem when upload file and save than we change input.value and save it will upload another file  */
 		}
 
-		if (hasImageChanged || hasBgImageChanged) {
-			const imgRes = await startUpload(hasImageChanged ? avatar : bgImageFile);
+		let imgRes;
+		if (hasImageChanged) {
+			imgRes = await startUpload(avatar);
 			if (imgRes && imgRes[0].url) {
-				if (hasImageChanged) {
-					data.avatar = imgRes[0].url;
-				} else {
-					data.bg_image = imgRes[0].url;
-				}
-				setLoading((prev) => ({ ...prev, button: false }));
+				data.avatar = imgRes[0].url;
 			}
+		}
+		if (hasBgImageChanged) {
+			imgRes = await startUpload(bgImageFile);
+			if (imgRes && imgRes[0].url) {
+				data.bg_image = imgRes[0].url;
+			}
+		}
+
+		if (imgRes) {
+			setLoading((prev) => ({ ...prev, button: false }));
 		}
 
 		{
