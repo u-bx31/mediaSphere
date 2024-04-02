@@ -109,8 +109,9 @@ export async function UpdateUserAccount({
 						bio: bio?.toLowerCase(),
 					},
 					{ upsert: true }
-				);
-				revalidatePath(path);
+				).then(() => {
+					revalidatePath(path);
+				});
 			} else {
 				return {
 					message: "This user not found",

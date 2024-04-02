@@ -36,7 +36,7 @@ const Navbar = ({ user }: any) => {
 	return (
 		<nav className="navbar-class">
 			<div
-				className={`flex flex-wrap items-center justify-between mx-auto lg:p-1 `}>
+				className={`flex flex-wrap items-center justify-between mx-auto  `}>
 				<div className="flex flex-row items-center">
 					<div className="md:hidden">
 						<Sheet>

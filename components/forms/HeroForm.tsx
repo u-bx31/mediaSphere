@@ -3,12 +3,15 @@ import { MoveRight } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import SubmitButton from "../shared/SubmitButton";
+import { useState } from "react";
 
 const HeroForm = ({ user }: any) => {
 	const currentUser = JSON.parse(user);
+	const [btnLoading, setBtnLoading] = useState(false);
 	const { push } = useRouter();
 	const handleSubmit = (e: React.SyntheticEvent) => {
 		e.preventDefault();
+		setBtnLoading(true);
 		const formData = new FormData(e.target as HTMLFormElement);
 		const userName = formData.get("userName") as string;
 		console.log(currentUser);
@@ -16,6 +19,7 @@ const HeroForm = ({ user }: any) => {
 			push("/account");
 		} else {
 			if (userName.length < 2 || userName.length > 20) {
+				setBtnLoading(false);
 				toast({
 					title: "Validation error",
 					description: "The username must be at least between 6  and 20 characters",
@@ -40,7 +44,7 @@ const HeroForm = ({ user }: any) => {
 					className="w-full pl-1 pr-3 py-4 text-gray-400 bg-white border-none focus:border-gray-300 duration-150 outline-none rounded-lg sm:max-w-sm sm:w-auto"
 				/>
 			</div>
-			<SubmitButton className={"!w-full md:!w-[200px]"}>
+			<SubmitButton className={"!w-full md:!w-[200px]"} loading={btnLoading}>
 				Get started for free
 				<MoveRight className="w-5 h-5 stroke-white" />
 			</SubmitButton>

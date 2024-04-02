@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
 	Form,
 	FormControl,
@@ -19,11 +18,13 @@ import SubmitButton from "../shared/SubmitButton";
 import { CreateUserAccount } from "@/lib/actions/account.action";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const AccountForm = ({ user }: any) => {
 	const currentUser = JSON.parse(user);
 	const { push } = useRouter();
-	
+
+	const [btnLoading, setBtnLoading] = useState(false);
 	//FIXME: make it load faster
 	const target_username =
 		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
@@ -40,12 +41,13 @@ const AccountForm = ({ user }: any) => {
 			userName: data.userName || "",
 		}).then((res) => {
 			if (res?.message) {
+				setBtnLoading(false);
 				toast({
 					title: res?.message,
 					variant: "destructive",
 				});
 			} else {
-				push("/account/" + currentUser.id);
+				push("/account/info");
 				localStorage.removeItem("target_username");
 			}
 		});
@@ -71,10 +73,7 @@ const AccountForm = ({ user }: any) => {
 						</FormItem>
 					)}
 				/>
-				<SubmitButton
-					className={"!w-full"}>
-					Create
-				</SubmitButton>
+				<SubmitButton className={"!w-full"}>Create</SubmitButton>
 			</form>
 		</Form>
 	);

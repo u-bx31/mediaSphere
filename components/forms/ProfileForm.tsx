@@ -19,12 +19,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { UpdateUserAccount } from "@/lib/actions/account.action";
 import { useEffect, useRef, useState } from "react";
 import {
-	ImageIcon,
 	ImagePlus,
 	Loader2Icon,
 	PenLineIcon,
 	PlusCircleIcon,
-	SwatchBook,
 } from "lucide-react";
 import { ComboboxDemo } from "../ui/combobox";
 import ImageUpload from "../shared/ImageUpload";
@@ -32,42 +30,39 @@ import { toast } from "../ui/use-toast";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
 import { usePathname } from "next/navigation";
+import { options } from "@/constants";
 
 const ProfileForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
 	const currentAccount = JSON.parse(account);
 
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState({
+		form: true,
+		button: false,
+	});
+
 	const [bgImage, setBgImage] = useState(
 		currentAccount.background?.type == "image" && currentAccount.background?.value
 	);
 	const [bgImageFile, setBgImageFile] = useState<File[]>([]);
+
 	const [avatar, setAvatar] = useState<File[]>([]);
 
 	const [backgroundType, setBackgroundType] = useState<string>(
 		currentAccount.background.type || "color"
 	);
 	const [bgColorValue, setBgColorValue] = useState();
+
 	const { startUpload } = useUploadThing("imageUploader");
 	const path = usePathname();
+
 	useEffect(() => {
 		setBackgroundType(currentAccount.background.type);
 		if (currentAccount || currentUser) {
-			setLoading(false);
+			setLoading((prev) => ({ ...prev, form: false }));
 		}
 	}, []);
-	const options = [
-		{
-			value: "color",
-			label: "Color",
-			icon: <SwatchBook className="w-5 h-5 stroke-black" />,
-		},
-		{
-			value: "image",
-			label: "Image",
-			icon: <ImageIcon className="w-5 h-5 stroke-black" />,
-		},
-	];
+
 	const form = useForm<z.infer<typeof AccountValidation>>({
 		resolver: zodResolver(AccountValidation),
 		defaultValues: {
@@ -82,7 +77,7 @@ const ProfileForm = ({ user, account }: any) => {
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
 		const blob = data.avatar?.toString();
 		const blob2 = data.bg_image?.toString();
-
+		setLoading((prev) => ({ ...prev, button: true }));
 		const hasImageChanged = isBase64Image(blob || "");
 		const hasBgImageChanged = isBase64Image(blob2 || "");
 
@@ -93,17 +88,15 @@ const ProfileForm = ({ user, account }: any) => {
 			/* 2 FIXME: fix problem when upload file and save than we change input.value and save it will upload another file  */
 		}
 
-		if (hasImageChanged) {
-			const imgRes = await startUpload(avatar);
-			// TODO: add loading toast when uploading the image
+		if (hasImageChanged || hasBgImageChanged) {
+			const imgRes = await startUpload(hasImageChanged ? avatar : bgImageFile);
 			if (imgRes && imgRes[0].url) {
-				data.avatar = imgRes[0].url;
-			}
-		}
-		if (hasBgImageChanged) {
-			const imgRes = await startUpload(bgImageFile);
-			if (imgRes && imgRes[0].url) {
-				data.bg_image = imgRes[0].url;
+				if (hasImageChanged) {
+					data.avatar = imgRes[0].url;
+				} else {
+					data.bg_image = imgRes[0].url;
+				}
+				setLoading((prev) => ({ ...prev, button: false }));
 			}
 		}
 
@@ -117,7 +110,7 @@ const ProfileForm = ({ user, account }: any) => {
 			bgType: backgroundType || "color",
 			avatar: data.avatar?.toString() || "",
 			bgValue:
-				(backgroundType === "image" && data.bg_image) || "" || bgColorValue || "",
+				backgroundType === "image" ? data.bg_image || bgImage : bgColorValue || "",
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 			path: path,
@@ -128,6 +121,7 @@ const ProfileForm = ({ user, account }: any) => {
 				message: res?.message,
 			});
 		} else {
+			setLoading((prev) => ({ ...prev, button: false }));
 			toast({
 				title: "Successfully saved new changes",
 				variant: "default",
@@ -137,7 +131,7 @@ const ProfileForm = ({ user, account }: any) => {
 	}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
-			{loading && (
+			{loading.form && (
 				<div className="bg-white/70 backdrop-blur-sm absolute h-full w-full flex flex-col gap-3 items-center justify-center z-10 transition-all ease-linear">
 					<Loader2Icon className="w-8 h-8 animate-spin" />
 					<h1>Loading your data . . .</h1>
@@ -251,8 +245,8 @@ const ProfileForm = ({ user, account }: any) => {
 										<Image
 											src={field.value ? field.value : "/assets/svgs/profile.svg"}
 											alt="avatar"
-											width={86}
-											height={86}
+											width={1980}
+											height={900}
 											priority={field.value != ""}
 											className={`${
 												field?.value ? "rounded-full !w-full !h-full" : "!w-12 !h-12"
@@ -340,7 +334,9 @@ const ProfileForm = ({ user, account }: any) => {
 								</FormItem>
 							)}
 						/>
-						<SubmitButton className={"!w-full !p-3 !mt-4"}>Save</SubmitButton>
+						<SubmitButton className={"!w-full !p-3 !mt-4"} loading={loading.button}>
+							Save
+						</SubmitButton>
 					</div>
 				</form>
 			</Form>

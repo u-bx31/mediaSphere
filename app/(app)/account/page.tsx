@@ -9,7 +9,7 @@ const Page = async () => {
 	const userInfo = await fetchUser(user?.id || "");
 	const userAccount = await findUserAccount(user?.id || "");
 	if (userAccount) {
-		redirect("/account/" + user?.id);
+		redirect("/account/info");
 	}
 	return (
 		<div className="container flex flex-col justify-center items-center">
