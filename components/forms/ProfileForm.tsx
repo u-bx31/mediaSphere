@@ -29,8 +29,16 @@ import ImageUpload from "../shared/ImageUpload";
 import { toast } from "../ui/use-toast";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { options } from "@/constants";
+
+type Background = {
+	type: string;
+	value: string;
+	imgFile: File[];
+	url: string;
+	colorValue: string;
+};
 
 const ProfileForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
@@ -46,7 +54,18 @@ const ProfileForm = ({ user, account }: any) => {
 	);
 	const [bgImageFile, setBgImageFile] = useState<File[]>([]);
 
-	const [avatar, setAvatar] = useState<File[]>([]);
+	const [avatar, setAvatar] = useState<{ file: File[]; url: string }>({
+		file: [],
+		url: "",
+	});
+
+	const [background, setBackground] = useState<Background>({
+		type: currentAccount.background.type || "color",
+		value: "",
+		imgFile: [],
+		url: "",
+		colorValue: "",
+	});
 
 	const [backgroundType, setBackgroundType] = useState<string>(
 		currentAccount.background.type || "color"
@@ -55,6 +74,7 @@ const ProfileForm = ({ user, account }: any) => {
 
 	const { startUpload } = useUploadThing("imageUploader");
 	const path = usePathname();
+	const { push } = useRouter();
 
 	useEffect(() => {
 		setBackgroundType(currentAccount.background.type);
@@ -67,7 +87,7 @@ const ProfileForm = ({ user, account }: any) => {
 		resolver: zodResolver(AccountValidation),
 		defaultValues: {
 			userName: currentAccount?.userName || "",
-			avatar: currentAccount?.image || currentUser?.image || "",
+			avatar: currentAccount.image || currentUser?.image || "",
 			displayName: currentAccount?.displayName || "",
 			location: currentAccount?.location || "",
 			bio: currentAccount?.bio || "",
@@ -75,20 +95,27 @@ const ProfileForm = ({ user, account }: any) => {
 	});
 
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
-		const blob = data.avatar?.toString();
-		const blob2 = data.bg_image?.toString();
+		const bgImg = data.bg_image?.toString();
 		setLoading((prev) => ({ ...prev, button: true }));
-		const hasImageChanged = isBase64Image(blob || "");
-		const hasBgImageChanged = isBase64Image(blob2 || "");
+
+		const hasImageChanged = isBase64Image(
+			avatar.url || data.avatar!,
+			currentAccount.image
+		);
+		const hasBgImageChanged = isBase64Image(
+			bgImg!,
+			currentAccount.background.value
+		);
 
 		{
 			/* FIXME: fix problem when upload file and save than we change input.value and save it will upload another file  */
 		}
 
-		let imgRes;
+		let imgRes: any;
 		if (hasImageChanged) {
-			imgRes = await startUpload(avatar);
+			imgRes = await startUpload(avatar.file);
 			if (imgRes && imgRes[0].url) {
+				setAvatar((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
 				data.avatar = imgRes[0].url;
 			}
 		}
@@ -106,31 +133,33 @@ const ProfileForm = ({ user, account }: any) => {
 		{
 			/* 3 TODO: Save the background value on session or on cookies  */
 		}
-		const res = await UpdateUserAccount({
+		await UpdateUserAccount({
 			userId: currentUser?.id,
 			userName: data.userName?.toString(),
 			displayName: data.displayName?.toString(),
 			bgType: backgroundType || "color",
-			avatar: data.avatar?.toString() || "",
+			avatar: avatar.url || data.avatar || "",
 			bgValue:
 				backgroundType === "image" ? data.bg_image || bgImage : bgColorValue || "",
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 			path: path,
-		});
-		if (res?.message) {
-			form.control.setError("userName", {
-				type: "manual",
-				message: res?.message,
-			});
-		} else {
+		}).then((res) => {
 			setLoading((prev) => ({ ...prev, button: false }));
-			toast({
-				title: "Successfully saved new changes",
-				variant: "default",
-				icon: true,
-			});
-		}
+			if (res?.message) {
+				form.control.setError("userName", {
+					type: "manual",
+					message: res?.message,
+				});
+			} else {
+				toast({
+					title: "Successfully saved new changes",
+					variant: "default",
+					icon: true,
+				});
+				// push("/account/links");
+			}
+		});
 	}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
@@ -260,7 +289,9 @@ const ProfileForm = ({ user, account }: any) => {
 										</div>
 									</FormLabel>
 									<ImageUpload
-										setFiles={setAvatar}
+										setFiles={(value: any) =>
+											setAvatar((prev) => ({ ...prev, file: value }))
+										}
 										form={form}
 										action={field.onChange}
 									/>

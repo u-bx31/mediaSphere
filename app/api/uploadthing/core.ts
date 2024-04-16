@@ -30,7 +30,7 @@ export const ourFileRouter = {
 			//TODO: return error message of 'max size of file is 8mb'
 
 			// !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-			return { uploadedBy: metadata.userId };
+			return { uploadedBy: metadata.userId, file: file.url };
 		}),
 } satisfies FileRouter;
 
