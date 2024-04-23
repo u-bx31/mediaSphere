@@ -49,11 +49,6 @@ const ProfileForm = ({ user, account }: any) => {
 		button: false,
 	});
 
-	const [bgImage, setBgImage] = useState(
-		currentAccount.background?.type == "image" && currentAccount.background?.value
-	);
-	const [bgImageFile, setBgImageFile] = useState<File[]>([]);
-
 	const [avatar, setAvatar] = useState<{ file: File[]; url: string }>({
 		file: [],
 		url: "",
@@ -61,23 +56,20 @@ const ProfileForm = ({ user, account }: any) => {
 
 	const [background, setBackground] = useState<Background>({
 		type: currentAccount.background.type || "color",
-		value: "",
+		value: currentAccount.background?.value || "",
 		imgFile: [],
-		url: "",
+		url:
+			currentAccount.background?.type == "image" &&
+			currentAccount.background?.value,
 		colorValue: "",
 	});
-
-	const [backgroundType, setBackgroundType] = useState<string>(
-		currentAccount.background.type || "color"
-	);
-	const [bgColorValue, setBgColorValue] = useState();
 
 	const { startUpload } = useUploadThing("imageUploader");
 	const path = usePathname();
 	const { push } = useRouter();
 
 	useEffect(() => {
-		setBackgroundType(currentAccount.background.type);
+		setBackground((prev) => ({ ...prev, type: currentAccount.background.type }));
 		if (currentAccount || currentUser) {
 			setLoading((prev) => ({ ...prev, form: false }));
 		}
@@ -103,7 +95,7 @@ const ProfileForm = ({ user, account }: any) => {
 			currentAccount.image
 		);
 		const hasBgImageChanged = isBase64Image(
-			bgImg!,
+			background.url || data.bg_image!,
 			currentAccount.background.value
 		);
 
@@ -120,8 +112,9 @@ const ProfileForm = ({ user, account }: any) => {
 			}
 		}
 		if (hasBgImageChanged) {
-			imgRes = await startUpload(bgImageFile);
+			imgRes = await startUpload(background.imgFile);
 			if (imgRes && imgRes[0].url) {
+				setBackground((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
 				data.bg_image = imgRes[0].url;
 			}
 		}
@@ -137,10 +130,12 @@ const ProfileForm = ({ user, account }: any) => {
 			userId: currentUser?.id,
 			userName: data.userName?.toString(),
 			displayName: data.displayName?.toString(),
-			bgType: backgroundType || "color",
+			bgType: background.type || "color",
 			avatar: avatar.url || data.avatar || "",
 			bgValue:
-				backgroundType === "image" ? data.bg_image || bgImage : bgColorValue || "",
+				background.type === "image"
+					? data.bg_image || background.url
+					: background.colorValue || "",
 			location: data.location?.toString(),
 			bio: data.bio?.toString(),
 			path: path,
@@ -174,23 +169,23 @@ const ProfileForm = ({ user, account }: any) => {
 					<div
 						style={{
 							backgroundColor:
-								bgColorValue ||
+								background.colorValue ||
 								(currentAccount.background.type == "color" &&
 									currentAccount.background.value) ||
 								"#f0f0f0",
 						}}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
 						{/* Banner option :Image */}
-						{backgroundType == "image" && (
+						{background.type == "image" && (
 							<div className="bg-gray-400 !w-full !h-full">
 								<Image
-									src={bgImage ? bgImage : "/assets/svgs/profile.svg"}
+									src={background.url ? background.url : "/assets/svgs/profile.svg"}
 									alt="avatar"
 									width={1980}
 									height={800}
-									priority={bgImage != ""}
+									priority={background.url != ""}
 									className={` ${
-										bgImage
+										background.url
 											? "object-cover !w-fu1ll !h-full"
 											: "!w-12 !h-12 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
 									}  `}
@@ -202,14 +197,16 @@ const ProfileForm = ({ user, account }: any) => {
 							className="!w-[100px]"
 							buttonClassName="!w-[50px] absolute top-2 right-2 !rounded-full"
 							options={options}
-							value={backgroundType}
-							setValue={setBackgroundType}
+							value={background.type}
+							setValue={(val: string) => {
+								setBackground((prev) => ({ ...prev, type: val }));
+							}}
 						/>
 
 						{/* bg picker */}
-						{backgroundType && (
+						{background.type && (
 							<div className="!w-[40px] !h-[35px] absolute top-14 right-2 !rounded-full bg-white overflow-hidden text-center shadow-sm border-gray-200 border-2 cursor-pointer hover:bg-white/80 ">
-								{backgroundType === "color" ? (
+								{background.type === "color" ? (
 									// Color Picker
 									<FormField
 										control={form.control}
@@ -229,7 +226,10 @@ const ProfileForm = ({ user, account }: any) => {
 															{...field}
 															defaultValue={currentAccount.background.value}
 															onChange={(e: any) => {
-																setBgColorValue((prevColor) => e.target.value);
+																setBackground((prev) => ({
+																	...prev,
+																	colorValue: e.target.value,
+																}));
 															}}
 														/>
 													</FormControl>
@@ -251,8 +251,12 @@ const ProfileForm = ({ user, account }: any) => {
 														/>
 													</FormLabel>
 													<ImageUpload
-														setBg={setBgImage}
-														setFiles={setBgImageFile}
+														setBg={(val: string) => {
+															setBackground((prev) => ({ ...prev, url: val }));
+														}}
+														setFiles={(val: File[]) => {
+															setBackground((prev) => ({ ...prev, imgFile: val }));
+														}}
 														form={form}
 														action={field.onChange}
 													/>
