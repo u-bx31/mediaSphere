@@ -64,7 +64,16 @@ const ProfileForm = ({ user, account }: any) => {
 		colorValue: "",
 	});
 
-	const { startUpload } = useUploadThing("imageUploader");
+	const { startUpload } = useUploadThing("imageUploader", {
+		onUploadError: () => {
+			setLoading((prev) => ({ ...prev, button: false }));
+			toast({
+				title: "Something wrong on your image.",
+				description: "Make sue that the image not above 4MB",
+				variant: "destructive",
+			});
+		},
+	});
 	const path = usePathname();
 	const { push } = useRouter();
 
@@ -105,17 +114,25 @@ const ProfileForm = ({ user, account }: any) => {
 
 		let imgRes: any;
 		if (hasImageChanged) {
-			imgRes = await startUpload(avatar.file);
-			if (imgRes && imgRes[0].url) {
-				setAvatar((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
-				data.avatar = imgRes[0].url;
+			try {
+				imgRes = await startUpload(avatar.file);
+				if (imgRes && imgRes[0].url) {
+					setAvatar((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
+					data.avatar = imgRes[0].url;
+				}
+			} catch (error: any) {
+				console.log('upload avatar',error);
 			}
 		}
 		if (hasBgImageChanged) {
-			imgRes = await startUpload(background.imgFile);
-			if (imgRes && imgRes[0].url) {
-				setBackground((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
-				data.bg_image = imgRes[0].url;
+			try {
+				imgRes = await startUpload(background.imgFile);
+				if (imgRes && imgRes[0].url) {
+					setBackground((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
+					data.bg_image = imgRes[0].url;
+				}
+			} catch (error: any) {
+				console.log('upload banner',error);
 			}
 		}
 
