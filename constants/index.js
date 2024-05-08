@@ -24,11 +24,13 @@ export const mediaOptions = [
     value: "email",
     label: "E-mail",
     icon: <MailIcon className="w-5 h-5 stroke-black" />,
+    placeholder:'Email'
   },
   {
     value: "mobile",
     label: "Mobile",
     icon: <PhoneIcon className="w-5 h-5 stroke-black" />,
+    placeholder:'+1 341 412 533 23'
   },
   {
     value: "instagram",

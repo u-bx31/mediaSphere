@@ -8,6 +8,7 @@ interface SocialLink {
 	label: string;
 	value: string;
 	icons: any;
+  placeholder:string
 }
 
 const LinksForm = () => {
@@ -47,7 +48,7 @@ const LinksForm = () => {
 						return (
 							<div className=" w-100 flex flex-row gap-3 items-center" key={index}>
 								<div className="">{vl.icon}</div>
-								<Input type="text" className="w-full " />
+								<Input type="text" className="w-full " placeholder={vl.placeholder}/>
 								<button
 									className="bg-red-500 rounded-full p-1"
 									onClick={() => handleRemoveOptions(vl.value)}>

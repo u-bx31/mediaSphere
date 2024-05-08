@@ -123,6 +123,35 @@ export async function UpdateUserAccount({
 	}
 }
 
+export async function savePageButtons({
+	userId,
+	socialLinkKey,
+	socialLinkValue,
+}: {
+	userId: string;
+	socialLinkKey: string;
+	socialLinkValue: string;
+}) {
+	ConnectionToDb();
+	const user = await User.findOne({ id: userId });
+	try {
+		if (user) {
+			const buttonsValues :any = {};
+			buttonsValues[socialLinkKey] = socialLinkValue;
+			const dataToUpdate = { buttons: buttonsValues };
+			await Account.updateOne(dataToUpdate);
+		} else {
+			return {
+				message: "This user not found",
+			};
+		}
+	} catch (error: any) {
+		throw new Error(`Failed to create/update user :${error.message}`);
+	}
+
+	return false;
+}
+
 const ConnectionToDb = () => {
 	try {
 		return connectToDB();

@@ -13,6 +13,10 @@ const accountSchema = new mongoose.Schema({
 		type: { type: String, required: true },
 		value: { type: String, required: true },
 	},
+	links: {
+		social: { type: Object, default: {} },
+		custom: { type: Object, default: {} },
+	},
 	location: { type: String, min: 1 },
 	bio: { type: String, min: 1 },
 	createdAt: { type: Date, default: Date.now },
