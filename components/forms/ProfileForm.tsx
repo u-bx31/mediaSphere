@@ -169,7 +169,7 @@ const ProfileForm = ({ user, account }: any) => {
 					variant: "default",
 					icon: true,
 				});
-				// push("/account/links");
+				push("/account/links");
 			}
 		});
 	}
