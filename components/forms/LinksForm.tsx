@@ -49,7 +49,6 @@ const LinksForm = ({ account }: any) => {
 			telegram: currentAccount?.links || "",
 			github: currentAccount?.links || "",
 			whatsapp: currentAccount?.links || "",
-			ticktock: currentAccount?.links || "",
 			youtube: currentAccount?.links || "",
 		},
 	});

@@ -16,6 +16,5 @@ export const AccountLinksValidation = z.object({
 	telegram : z.string().url().optional(),
 	github : z.string().optional(),
 	whatsapp: z.string().max(30).optional(),
-	ticktock: z.string().max(30000).optional(),
 	youtube: z.string().max(30000).optional(),
 });
