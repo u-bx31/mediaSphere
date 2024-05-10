@@ -3,15 +3,29 @@ import { mediaOptions } from "@/constants";
 import { Plus, X } from "lucide-react";
 import { Input } from "../ui/input";
 import { useState } from "react";
+import { AccountLinksValidation } from "@/lib/validations/account";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "../ui/form";
 
 interface SocialLink {
 	label: string;
-	value: string;
-	icons: any;
-  placeholder:string
+	value: any;
+	icon: any;
+	placeholder: string;
 }
 
-const LinksForm = () => {
+const LinksForm = ({ account }: any) => {
+	const currentAccount = JSON.parse(account);
+
 	const [mediaLinks, setMediaLinks] = useState<SocialLink[]>([]);
 
 	let Options = mediaOptions.filter(
@@ -25,6 +39,22 @@ const LinksForm = () => {
 	const handleRemoveOptions = (val: any) => {
 		setMediaLinks(mediaLinks.filter((vl) => vl.value !== val));
 	};
+
+	const form = useForm<z.infer<typeof AccountLinksValidation>>({
+		resolver: zodResolver(AccountLinksValidation),
+		defaultValues: {
+			email: currentAccount?.links?.email || "",
+			phone: currentAccount?.links?.phone || "",
+			instagram: currentAccount?.links?.instagram || "",
+			telegram: currentAccount?.links || "",
+			github: currentAccount?.links || "",
+			whatsapp: currentAccount?.links || "",
+			ticktock: currentAccount?.links || "",
+			youtube: currentAccount?.links || "",
+		},
+	});
+
+	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
 			<div className="p-5 flex flex-col gap-2">
@@ -43,21 +73,44 @@ const LinksForm = () => {
 						);
 					})}
 				</div>
-				<div className="w-100 flex flex-col gap-3 mx-8 mt-5">
-					{mediaLinks.map((vl: any,index) => {
-						return (
-							<div className=" w-100 flex flex-row gap-3 items-center" key={index}>
-								<div className="">{vl.icon}</div>
-								<Input type="text" className="w-full " placeholder={vl.placeholder}/>
-								<button
-									className="bg-red-500 rounded-full p-1"
-									onClick={() => handleRemoveOptions(vl.value)}>
-									<X className="w-3 h-3 stroke-white" />
-								</button>
-							</div>
-						);
-					})}
-				</div>
+				{/* //TODO: add form for those inputs and add validation to each of them */}
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="!w-100 flex flex-col gap-3 mx-8 mt-5">
+						{mediaLinks.map((vl: SocialLink, index) => {
+							return (
+								<div className="!w-100 flex flex-row gap-3 items-center" key={index}>
+									<div className="">{vl.icon}</div>
+									<FormField
+										control={form.control}
+										name={vl.value}
+										render={({ field }) => {
+											return (
+												<FormItem className="!w-full">
+													<FormControl >
+														<Input
+															className="!w-full text-start p-4 "
+															placeholder={vl.placeholder}
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											);
+										}}
+									/>
+
+									<button
+										className="bg-red-500 rounded-full p-1"
+										onClick={() => handleRemoveOptions(vl.value)}>
+										<X className="w-3 h-3 stroke-white" />
+									</button>
+								</div>
+							);
+						})}
+					</form>
+				</Form>
 			</div>
 		</div>
 	);

@@ -17,6 +17,7 @@ const accountSchema = new mongoose.Schema({
 		social: { type: Object, default: {} },
 		custom: { type: Object, default: {} },
 	},
+	state: { type: String, required: true, default: "info" },
 	location: { type: String, min: 1 },
 	bio: { type: String, min: 1 },
 	createdAt: { type: Date, default: Date.now },

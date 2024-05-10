@@ -9,3 +9,13 @@ export const AccountValidation = z.object({
 	location: z.string().max(30).optional(),
 	bio: z.string().max(30000).optional(),
 });
+export const AccountLinksValidation = z.object({
+	email: z.string().max(30).optional(),
+	phone: z.string().max(30).optional(),
+	instagram: z.string().url().optional(),
+	telegram : z.string().url().optional(),
+	github : z.string().optional(),
+	whatsapp: z.string().max(30).optional(),
+	ticktock: z.string().max(30000).optional(),
+	youtube: z.string().max(30000).optional(),
+});

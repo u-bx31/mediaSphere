@@ -38,8 +38,8 @@ export async function CreateUserAccount({
 }: AccountUserProps) {
 	ConnectionToDb();
 	const user = await User.findOne({ id: userId });
-	const currentUsername = await Account.findOne({ userName: userName });
-	if (currentUsername) {
+	const userAccount = await Account.findOne({ userName: userName });
+	if (userAccount) {
 		return {
 			message: "This userName already taken",
 		};
@@ -84,11 +84,8 @@ export async function UpdateUserAccount({
 	ConnectionToDb();
 	const user = await User.findOne({ id: userId });
 
-	const currentUsername = await Account.findOne({ userName: userName });
-	if (
-		currentUsername &&
-		currentUsername?.createdBy.toString() != user?._id.toString()
-	) {
+	const userAccount = await Account.findOne({ userName: userName });
+	if (userAccount && userAccount?.createdBy.toString() != user?._id.toString()) {
 		return {
 			message: "This userName already taken",
 		};
@@ -127,19 +124,36 @@ export async function savePageButtons({
 	userId,
 	socialLinkKey,
 	socialLinkValue,
+	path,
 }: {
 	userId: string;
 	socialLinkKey: string;
 	socialLinkValue: string;
+	path: string;
 }) {
 	ConnectionToDb();
 	const user = await User.findOne({ id: userId });
+	const userAccount = await Account.findOne({ userName: user?.userName });
+
 	try {
 		if (user) {
-			const buttonsValues :any = {};
+			let currentState = "links";
+
+			if (userAccount.state == "completed") {
+				currentState = "completed";
+			}
+			const buttonsValues: any = {};
 			buttonsValues[socialLinkKey] = socialLinkValue;
-			const dataToUpdate = { buttons: buttonsValues };
-			await Account.updateOne(dataToUpdate);
+			await Account.findOneAndUpdate(
+				{ createdBy: user?._id },
+				{
+					links: { social: buttonsValues },
+					state: currentState,
+				},
+				{ upsert: true }
+			).then(() => {
+				revalidatePath(path);
+			});
 		} else {
 			return {
 				message: "This user not found",
