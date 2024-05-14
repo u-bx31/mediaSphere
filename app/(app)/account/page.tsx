@@ -8,9 +8,12 @@ const Page = async () => {
 	const user = await currentUser();
 	const userInfo = await fetchUser(user?.id || "");
 	const userAccount = await findUserAccount(user?.id || "");
-	if (userAccount) {
+	if (userAccount?.data?.state == 'links') {
+		redirect("/account/links");
+	}else{
 		redirect("/account/info");
 	}
+
 	return (
 		<div className="container flex flex-col justify-center items-center">
 			<div className="flex flex-col gap-5 mt-5 items-center">
