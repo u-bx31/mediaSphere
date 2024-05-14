@@ -120,34 +120,30 @@ export async function UpdateUserAccount({
 	}
 }
 
-export async function savePageButtons({
+export async function updateLinksAccount({
 	userId,
-	socialLinkKey,
-	socialLinkValue,
+	data,
 	path,
 }: {
 	userId: string;
-	socialLinkKey: string;
-	socialLinkValue: string;
+	data: any;
 	path: string;
 }) {
 	ConnectionToDb();
 	const user = await User.findOne({ id: userId });
 	const userAccount = await Account.findOne({ userName: user?.userName });
-
 	try {
 		if (user) {
 			let currentState = "links";
 
-			if (userAccount.state == "completed") {
+			if (userAccount?.state == "completed") {
 				currentState = "completed";
 			}
-			const buttonsValues: any = {};
-			buttonsValues[socialLinkKey] = socialLinkValue;
+
 			await Account.findOneAndUpdate(
 				{ createdBy: user?._id },
 				{
-					links: { social: buttonsValues },
+					links: { social: data },
 					state: currentState,
 				},
 				{ upsert: true }
@@ -160,7 +156,7 @@ export async function savePageButtons({
 			};
 		}
 	} catch (error: any) {
-		throw new Error(`Failed to create/update user :${error.message}`);
+		throw new Error(`Failed to create/update user links :${error.message}`);
 	}
 
 	return false;

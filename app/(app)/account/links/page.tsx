@@ -10,7 +10,7 @@ const Page = async () => {
 			<div className="flex flex-col gap-12 items-center justify-center">
 				<h1 className="text-xl font-bold">Your profile Links</h1>
 
-				<LinksForm account={JSON.stringify(account)} />
+				<LinksForm account={JSON.stringify(account)} user={user?.id} />
 			</div>
 		</div>
 	);

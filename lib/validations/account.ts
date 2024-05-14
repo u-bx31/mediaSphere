@@ -10,8 +10,8 @@ export const AccountValidation = z.object({
 	bio: z.string().max(30000).optional(),
 });
 export const AccountLinksValidation = z.object({
-	email: z.string().max(30).optional(),
-	phone: z.string().max(30).optional(),
+	email: z.string().email().max(30).optional(),
+	mobile: z.string().max(30).optional(),
 	instagram: z.string().url().optional(),
 	telegram : z.string().url().optional(),
 	github : z.string().optional(),

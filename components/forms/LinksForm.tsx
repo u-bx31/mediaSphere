@@ -1,11 +1,11 @@
 "use client";
 import { mediaOptions } from "@/constants";
 import { Plus, X } from "lucide-react";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { AccountLinksValidation } from "@/lib/validations/account";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
 	Form,
@@ -14,46 +14,63 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "../ui/form";
+} from "@/components/ui/form";
+import SubmitButton from "../shared/SubmitButton";
+import { updateLinksAccount } from "@/lib/actions/account.action";
+import { usePathname } from "next/navigation";
 
 interface SocialLink {
 	label: string;
 	value: any;
-	icon: any;
-	placeholder: string;
+	icon: JSX.Element;
+	placeholder?: string;
 }
 
-const LinksForm = ({ account }: any) => {
+const LinksForm = ({ account, user }: any) => {
 	const currentAccount = JSON.parse(account);
+	const path = usePathname();
+	const accountLinks: (SocialLink | undefined)[] = Object.keys(
+		currentAccount.links.social
+	).map((k) => mediaOptions.find((b) => b.value === k));
+	const [mediaLinks, setMediaLinks] =
+		useState<(SocialLink | undefined)[]>(accountLinks);
 
-	const [mediaLinks, setMediaLinks] = useState<SocialLink[]>([]);
+	const form = useForm<z.infer<typeof AccountLinksValidation>>({
+		resolver: zodResolver(AccountLinksValidation),
+		defaultValues: {
+			email: currentAccount?.links?.social?.email,
+			mobile: currentAccount?.links?.social?.mobile,
+			instagram: currentAccount?.links?.social?.instagram,
+			telegram: currentAccount?.links?.social?.telegram,
+			github: currentAccount?.links?.social?.github,
+			whatsapp: currentAccount?.links?.social?.whatsapp,
+			youtube: currentAccount?.links?.social.youtube,
+		},
+	});
 
 	let Options = mediaOptions.filter(
-		(link) => !mediaLinks.find((v1) => link.value === v1.value)
+		(link) => !mediaLinks.find((v1) => link.value === v1?.value)
 	);
 
 	const handleAddingLinks = (val: any) => {
 		setMediaLinks((prev) => [...prev, val]);
 	};
 
-	const handleRemoveOptions = (val: any) => {
-		setMediaLinks(mediaLinks.filter((vl) => vl.value !== val));
+	const handleRemoveOptions = (val: string) => {
+		setMediaLinks(mediaLinks.filter((vl) => vl?.value !== val));
+		form.control._formValues[val] = undefined;
+		delete form.control._fields[val];
 	};
 
-	const form = useForm<z.infer<typeof AccountLinksValidation>>({
-		resolver: zodResolver(AccountLinksValidation),
-		defaultValues: {
-			email: currentAccount?.links?.email || "",
-			phone: currentAccount?.links?.phone || "",
-			instagram: currentAccount?.links?.instagram || "",
-			telegram: currentAccount?.links || "",
-			github: currentAccount?.links || "",
-			whatsapp: currentAccount?.links || "",
-			youtube: currentAccount?.links || "",
-		},
-	});
-
-	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {}
+	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
+		console.log("submit", data);
+		await updateLinksAccount({
+			userId: user,
+			data: data,
+			path: path,
+		});
+		alert("done");
+	}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
 			<div className="p-5 flex flex-col gap-2">
@@ -77,20 +94,22 @@ const LinksForm = ({ account }: any) => {
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="!w-100 flex flex-col gap-3 mx-8 mt-5">
-						{mediaLinks.map((vl: SocialLink, index) => {
+						{mediaLinks.map((vl: SocialLink | undefined) => {
 							return (
-								<div className="!w-100 flex flex-row gap-3 items-center" key={index}>
-									<div className="">{vl.icon}</div>
+								<div
+									className="!w-100 flex flex-row gap-3 items-center"
+									key={vl?.value}>
+									<div className="">{vl?.icon}</div>
 									<FormField
 										control={form.control}
-										name={vl.value}
+										name={vl?.value}
 										render={({ field }) => {
 											return (
 												<FormItem className="!w-full">
-													<FormControl >
+													<FormControl>
 														<Input
 															className="!w-full text-start p-4 "
-															placeholder={vl.placeholder}
+															placeholder={vl?.placeholder}
 															{...field}
 														/>
 													</FormControl>
@@ -101,13 +120,15 @@ const LinksForm = ({ account }: any) => {
 									/>
 
 									<button
+										type="button"
 										className="bg-red-500 rounded-full p-1"
-										onClick={() => handleRemoveOptions(vl.value)}>
+										onClick={() => handleRemoveOptions(vl?.value)}>
 										<X className="w-3 h-3 stroke-white" />
 									</button>
 								</div>
 							);
 						})}
+						<SubmitButton className={"!w-full !p-3 !mt-4"}>Save</SubmitButton>
 					</form>
 				</Form>
 			</div>
