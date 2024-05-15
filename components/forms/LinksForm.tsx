@@ -1,11 +1,12 @@
 "use client";
 import { mediaOptions } from "@/constants";
-import { Plus, X } from "lucide-react";
+import { GripHorizontalIcon, Plus, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { AccountLinksValidation } from "@/lib/validations/account";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
+import { ReactSortable } from "react-sortablejs";
 import { z } from "zod";
 import {
 	Form,
@@ -29,23 +30,29 @@ interface SocialLink {
 const LinksForm = ({ account, user }: any) => {
 	const currentAccount = JSON.parse(account);
 	const path = usePathname();
-	const accountLinks: (SocialLink | undefined)[] = Object.keys(
-		currentAccount.links.social
-	).map((k) => mediaOptions.find((b) => b.value === k));
-	const [mediaLinks, setMediaLinks] =
-		useState<(SocialLink | undefined)[]>(accountLinks);
+	const accountLinks: (SocialLink | undefined)[] =
+	currentAccount.links.social &&
+		Object.keys(currentAccount.links.social)?.map((k) =>
+			mediaOptions.find((b) => b.value === k)
+		);
+	const [mediaLinks, setMediaLinks] = useState<(SocialLink | undefined)[]>(
+		accountLinks || []
+	);
+
+	const val =
+		mediaLinks.map((vl) => ({
+			[vl?.value]: currentAccount.links.social[vl?.value],
+		})) || [];
 
 	const form = useForm<z.infer<typeof AccountLinksValidation>>({
 		resolver: zodResolver(AccountLinksValidation),
 		defaultValues: {
-			email: currentAccount?.links?.social?.email,
-			mobile: currentAccount?.links?.social?.mobile,
-			instagram: currentAccount?.links?.social?.instagram,
-			telegram: currentAccount?.links?.social?.telegram,
-			github: currentAccount?.links?.social?.github,
-			whatsapp: currentAccount?.links?.social?.whatsapp,
-			youtube: currentAccount?.links?.social.youtube,
+			arra1: val || [],
 		},
+	});
+	const { move } = useFieldArray({
+		control: form.control,
+		name: "arra1",
 	});
 
 	let Options = mediaOptions.filter(
@@ -63,10 +70,9 @@ const LinksForm = ({ account, user }: any) => {
 	};
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
-		console.log("submit", data);
 		await updateLinksAccount({
 			userId: user,
-			data: data,
+			data: data.arra1,
 			path: path,
 		});
 		alert("done");
@@ -91,43 +97,55 @@ const LinksForm = ({ account, user }: any) => {
 				</div>
 				{/* //TODO: add form for those inputs and add validation to each of them */}
 				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className="!w-100 flex flex-col gap-3 mx-8 mt-5">
-						{mediaLinks.map((vl: SocialLink | undefined) => {
-							return (
-								<div
-									className="!w-100 flex flex-row gap-3 items-center"
-									key={vl?.value}>
-									<div className="">{vl?.icon}</div>
-									<FormField
-										control={form.control}
-										name={vl?.value}
-										render={({ field }) => {
-											return (
-												<FormItem className="!w-full">
-													<FormControl>
-														<Input
-															className="!w-full text-start p-4 "
-															placeholder={vl?.placeholder}
-															{...field}
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											);
-										}}
-									/>
+					<form onSubmit={form.handleSubmit(onSubmit)}>
+						<ReactSortable
+							list={mediaLinks}
+							setList={setMediaLinks}
+							animation={200}
+							delayOnTouchStart={true}
+							delay={2}
+							onEnd={(cl) => {
+								move(cl.oldIndex as number, cl.newIndex as number);
+							}}
+							handle=".handle"
+							ghostClass="opacity-5"
+							className="!w-100 flex flex-col gap-3 mx-8 mt-5 ">
+							{mediaLinks.map((vl, index: number) => {
+								return (
+									<div
+										className="!w-100 flex flex-row gap-3 items-center"
+										key={vl?.value}>
+										<GripHorizontalIcon className="w-5 h-5 stroke-gray-400 handle cursor-pointer" />
+										<div className="">{vl?.icon}</div>
+										<FormField
+											control={form.control}
+											name={`arra1.${index}.${vl?.value}`}
+											render={({ field }) => {
+												return (
+													<FormItem className="!w-full">
+														<FormControl>
+															<Input
+																className="!w-full text-start p-4 "
+																placeholder={vl?.placeholder}
+																{...field}
+															/>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												);
+											}}
+										/>
 
-									<button
-										type="button"
-										className="bg-red-500 rounded-full p-1"
-										onClick={() => handleRemoveOptions(vl?.value)}>
-										<X className="w-3 h-3 stroke-white" />
-									</button>
-								</div>
-							);
-						})}
+										<button
+											type="button"
+											className="bg-red-500 rounded-full p-1"
+											onClick={() => handleRemoveOptions(vl?.value)}>
+											<X className="w-3 h-3 stroke-white" />
+										</button>
+									</div>
+								);
+							})}
+						</ReactSortable>
 						<SubmitButton className={"!w-full !p-3 !mt-4"}>Save</SubmitButton>
 					</form>
 				</Form>
