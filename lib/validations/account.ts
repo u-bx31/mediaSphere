@@ -1,3 +1,4 @@
+import { mediaOptions } from "@/constants";
 import { z } from "zod";
 
 export const AccountValidation = z.object({
@@ -15,16 +16,30 @@ export const AccountValidation = z.object({
 	location: z.string().max(30).optional(),
 	bio: z.string().max(30000).optional(),
 });
+interface SocialLink {
+	label: string;
+	value: string;
+	icon: JSX.Element;
+	placeholder?: string;
+	type?: "string" | "number" | "url" | "email";
+}
+const schemaObject: Record<string, z.ZodTypeAny> = {};
+//FIXME: fix the constant schema
+mediaOptions.forEach((res: SocialLink) => {
+	switch (res.type) {
+		case "email":
+			schemaObject[res?.value] = z.string().email().optional();
+			break;
+		case "number":
+			schemaObject[res?.value] = z.number().optional();
+			break;
+		case "url":
+			schemaObject[res?.value] = z.string().url().optional();
+			break;
+		default:
+			schemaObject[res?.value] = z.string().optional();
+	}
+});
 export const AccountLinksValidation = z.object({
-	arra1: z.array(
-		z.object({
-			email: z.string().email().max(30).optional(),
-			mobile: z.string().max(30).optional(),
-			instagram: z.string().url().optional(),
-			telegram: z.string().url().optional(),
-			github: z.string().optional(),
-			whatsapp: z.string().max(30).optional(),
-			youtube: z.string().max(30000).optional(),
-		})
-	),
+	arra1: z.array(z.object(schemaObject)),
 });
