@@ -14,26 +14,17 @@ const SocialLinksComponents = ({
 }: {
 	links: (SocialLink | ItemInterface | undefined)[];
 	setLinks: Dispatch<SetStateAction<(SocialLink | ItemInterface | undefined)[]>>;
-	form: UseFormReturn<
-		{
-			arra1: {
-				[x: string]: any;
-			}[];
-		},
-		any,
-		undefined
-	>;
+	form: any;
 }) => {
 	const { move } = useFieldArray({
 		control: form.control,
-		name: "arra1",
+		name: "social",
 	});
 
 	const handleRemoveOptions = (val: string, index: number) => {
 		setLinks(links.filter((vl) => vl?.value !== val));
-		form.control._formValues.arra1?.splice(index, 1);
-		((form.control._fields.arra1 ?? []) as unknown as Array<any>).splice(index, 1);
-		console.log(form);
+		form.control._formValues.social?.splice(index, 1);
+		((form.control._fields.social ?? []) as unknown as Array<any>).splice(index, 1);
 	};
 
 	return (
@@ -56,7 +47,7 @@ const SocialLinksComponents = ({
 						<div className="">{vl?.icon}</div>
 						<FormField
 							control={form.control}
-							name={`arra1.${index}.${vl?.value}`}
+							name={`social.${index}.${vl?.value}`}
 							render={({ field }) => {
 								return (
 									<FormItem className="!w-full">
@@ -75,9 +66,9 @@ const SocialLinksComponents = ({
 
 						<button
 							type="button"
-							className="bg-red-500 rounded-full p-1"
+							className="group bg-white hover:bg-red-500/80 border border-red-500 hover:border-red-500/60 !h-100 rounded-full p-1 transition-all"
 							onClick={() => handleRemoveOptions(vl?.value, index)}>
-							<X className="w-3 h-3 stroke-white" />
+							<X className="w-3 h-3 stroke-red-500 group-hover:stroke-white stroke-[3]" />
 						</button>
 					</div>
 				);

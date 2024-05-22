@@ -1,6 +1,6 @@
 "use client";
 import { mediaOptions } from "@/constants";
-import { GripHorizontalIcon, Plus, X } from "lucide-react";
+import { GripHorizontalIcon, Plus, PlusIcon, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { AccountLinksValidation } from "@/lib/validations/account";
@@ -21,9 +21,10 @@ import { updateLinksAccount } from "@/lib/actions/account.action";
 import { usePathname } from "next/navigation";
 import { SocialLink } from "@/constants/types";
 import SocialLinksComponents from "../shared/SocialLinksComponents";
+import CustomLinksComponents from "../shared/CustomLinksComponents";
+import { Button } from "../ui/button";
 
 const LinksForm = ({ account, user }: any) => {
-	
 	const currentAccount = JSON.parse(account);
 	const path = usePathname();
 
@@ -33,9 +34,11 @@ const LinksForm = ({ account, user }: any) => {
 			mediaOptions.find((b) => b.value === k)
 		);
 
-	const [mediaLinks, setMediaLinks] = useState<(SocialLink | ItemInterface |undefined)[]>(
-		accountLinks || []
-	);
+	const [mediaLinks, setMediaLinks] = useState<
+		(SocialLink | ItemInterface | undefined)[]
+	>(accountLinks || []);
+
+	const [customLinks, setCustomLinks] = useState([{}]);
 
 	const val =
 		mediaLinks.map((vl) => ({
@@ -45,7 +48,8 @@ const LinksForm = ({ account, user }: any) => {
 	const form = useForm<z.infer<typeof AccountLinksValidation>>({
 		resolver: zodResolver(AccountLinksValidation),
 		defaultValues: {
-			arra1: val || [],
+			social: val || [],
+			custom: [{}],
 		},
 	});
 
@@ -60,16 +64,17 @@ const LinksForm = ({ account, user }: any) => {
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
 		await updateLinksAccount({
 			userId: user,
-			data: data.arra1,
+			data: data.social,
 			path: path,
 		});
+		//TODO: add validation toast
 		alert("done");
 	}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
 			<div className="p-5 flex flex-col gap-2">
+				<h1 className="text-lg font-bold ">Social Media links</h1>
 				<div className="flex flex-wrap gap-2">
-
 					{Options.map((vals) => {
 						return (
 							<button
@@ -83,16 +88,31 @@ const LinksForm = ({ account, user }: any) => {
 							</button>
 						);
 					})}
-
 				</div>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="flex flex-col gap-2 ">
 						<SocialLinksComponents
 							form={form}
 							links={mediaLinks}
 							setLinks={setMediaLinks}
 						/>
+						<h1 className="text-lg font-bold mt-5">Custom Links</h1>
+
+						<CustomLinksComponents
+							form={form}
+							links={customLinks}
+							setLinks={setCustomLinks}
+						/>
+						<Button
+							type="button"
+							variant="outline"
+							className="!w-fit mx-auto rounded-full px-6 mt-4 gap-1">
+							<p className="font-semibold text-base text-primary/80">add link</p>
+							<PlusIcon className="w-5 h-5 stroke-primary/80 stroke-2" />
+						</Button>
 						<SubmitButton className={"!w-full !p-3 !mt-4"}>Save</SubmitButton>
 					</form>
 				</Form>

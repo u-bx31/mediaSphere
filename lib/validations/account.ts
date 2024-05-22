@@ -16,6 +16,7 @@ export const AccountValidation = z.object({
 	location: z.string().max(30).optional(),
 	bio: z.string().max(30000).optional(),
 });
+
 interface SocialLink {
 	label: string;
 	value: string;
@@ -40,6 +41,16 @@ mediaOptions.forEach((res: SocialLink) => {
 			schemaObject[res?.value] = z.string().optional();
 	}
 });
+
+
 export const AccountLinksValidation = z.object({
-	arra1: z.array(z.object(schemaObject)),
+	social: z.array(z.object(schemaObject)),
+	custom: z.array(
+		z.object({
+			icon: z.string().url().optional(),
+			title: z.string().optional(),
+			url: z.string().url().optional(),
+			description: z.string().optional(),
+		})
+	),
 });
