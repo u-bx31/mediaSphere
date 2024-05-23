@@ -7,7 +7,7 @@ import { AccountLinksValidation } from "@/lib/validations/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
-import { z } from "zod";
+import { object, z } from "zod";
 import {
 	Form,
 	FormControl,
@@ -37,8 +37,26 @@ const LinksForm = ({ account, user }: any) => {
 	const [mediaLinks, setMediaLinks] = useState<
 		(SocialLink | ItemInterface | undefined)[]
 	>(accountLinks || []);
-
-	const [customLinks, setCustomLinks] = useState([{}]);
+	const defaultCustomLinks = [
+		{
+			icon: "",
+			title: "1",
+			url: "http://localhost:3000/account/links",
+			description: "",
+		},
+		{
+			icon: "",
+			title: "2",
+			url: "http://localhost:3000/account/links",
+			description: "",
+		},
+		{
+			icon: "",
+			title: "3",
+			url: "http://localhost:3000/account/links",
+			description: "",
+		},
+	];
 
 	const val =
 		mediaLinks.map((vl) => ({
@@ -49,7 +67,7 @@ const LinksForm = ({ account, user }: any) => {
 		resolver: zodResolver(AccountLinksValidation),
 		defaultValues: {
 			social: val || [],
-			custom: [{}],
+			custom: defaultCustomLinks,
 		},
 	});
 
@@ -62,9 +80,10 @@ const LinksForm = ({ account, user }: any) => {
 	};
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
+		// console.log(data);
 		await updateLinksAccount({
 			userId: user,
-			data: data.social,
+			data: data,
 			path: path,
 		});
 		//TODO: add validation toast
@@ -100,19 +119,9 @@ const LinksForm = ({ account, user }: any) => {
 							setLinks={setMediaLinks}
 						/>
 						<h1 className="text-lg font-bold mt-5">Custom Links</h1>
-
 						<CustomLinksComponents
 							form={form}
-							links={customLinks}
-							setLinks={setCustomLinks}
 						/>
-						<Button
-							type="button"
-							variant="outline"
-							className="!w-fit mx-auto rounded-full px-6 mt-4 gap-1">
-							<p className="font-semibold text-base text-primary/80">add link</p>
-							<PlusIcon className="w-5 h-5 stroke-primary/80 stroke-2" />
-						</Button>
 						<SubmitButton className={"!w-full !p-3 !mt-4"}>Save</SubmitButton>
 					</form>
 				</Form>

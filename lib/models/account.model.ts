@@ -15,7 +15,13 @@ const accountSchema = new mongoose.Schema({
 	},
 	links: {
 		social: { type: Object, default: {} },
-		custom: { type: Object, default: {} },
+		custom: {
+			id: { type: mongoose.Schema.Types.ObjectId, required: true },
+			title: { type: String },
+			icon: { type: String },
+			url: { type: String },
+			description: { type: String },
+		},
 	},
 	state: { type: String, required: true, default: "info" },
 	location: { type: String, min: 1 },

@@ -139,7 +139,8 @@ export async function updateLinksAccount({
 			if (userAccount?.state == "completed") {
 				currentState = "completed";
 			}
-			const combinedObject = data.reduce((acc: any, obj: any) => {
+			console.log("data server", data);
+			const combinedObject = data?.social.reduce((acc: any, obj: any) => {
 				// Extract the key and value from the object
 				const [key, value] = Object.entries(obj)[0];
 				// Assign the value to the key in the accumulator object
@@ -147,16 +148,17 @@ export async function updateLinksAccount({
 				return acc;
 			}, {});
 
-			await Account.findOneAndUpdate(
-				{ createdBy: user?._id },
-				{
-					links: { social: combinedObject },
-					state: currentState,
-				},
-				{ upsert: true }
-			).then(() => {
-				revalidatePath(path);
-			});
+			console.log("data combinedObject", combinedObject);
+			// await Account.findOneAndUpdate(
+			// 	{ createdBy: user?._id },
+			// 	{
+			// 		links: { social: combinedObject },
+			// 		state: currentState,
+			// 	},
+			// 	{ upsert: true }
+			// ).then(() => {
+			// 	revalidatePath(path);
+			// });
 		} else {
 			return {
 				message: "This user not found",

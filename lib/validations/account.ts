@@ -42,7 +42,6 @@ mediaOptions.forEach((res: SocialLink) => {
 	}
 });
 
-
 export const AccountLinksValidation = z.object({
 	social: z.array(z.object(schemaObject)),
 	custom: z.array(
