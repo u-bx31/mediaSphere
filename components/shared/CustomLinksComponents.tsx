@@ -29,7 +29,7 @@ const CustomLinksComponents = ({ form }: { form: any }) => {
 		control: form.control,
 		name: "custom",
 	});
-
+	const [links, setLinks] = useState(fields);
 	const linksEmpty = fields.length > 1;
 
 	const AddNewCustomLink = () => {
@@ -43,10 +43,8 @@ const CustomLinksComponents = ({ form }: { form: any }) => {
 	return (
 		<>
 			<ReactSortable
-				list={fields}
-				setList={(newState) => {
-					replace(newState);
-				}}
+				list={links}
+				setList={setLinks}
 				animation={200}
 				delayOnTouchOnly
 				delay={2}

@@ -46,7 +46,7 @@ export const AccountLinksValidation = z.object({
 	social: z.array(z.object(schemaObject)),
 	custom: z.array(
 		z.object({
-			icon: z.string().url().optional(),
+			icon: z.string().optional(),
 			title: z.string().optional(),
 			url: z.string().url().optional(),
 			description: z.string().optional(),
