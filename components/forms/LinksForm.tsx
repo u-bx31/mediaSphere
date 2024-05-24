@@ -23,6 +23,8 @@ import { SocialLink } from "@/constants/types";
 import SocialLinksComponents from "../shared/SocialLinksComponents";
 import CustomLinksComponents from "../shared/CustomLinksComponents";
 import { Button } from "../ui/button";
+import { isBase64Image } from "@/lib/utils";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const LinksForm = ({ account, user }: any) => {
 	const currentAccount = JSON.parse(account);
@@ -37,27 +39,14 @@ const LinksForm = ({ account, user }: any) => {
 	const [mediaLinks, setMediaLinks] = useState<
 		(SocialLink | ItemInterface | undefined)[]
 	>(accountLinks || []);
-	const defaultCustomLinks = [
-		{
-			icon: "",
-			title: "1",
-			url: "http://localhost:3000/account/links",
-			description: "",
-		},
-		{
-			icon: "",
-			title: "2",
-			url: "http://localhost:3000/account/links",
-			description: "",
-		},
-		{
-			icon: "",
-			title: "3",
-			url: "http://localhost:3000/account/links",
-			description: "",
-		},
-	];
 
+	const [icon, setIcon] = useState<File[][]>([]);
+
+	const { startUpload } = useUploadThing("imageUploader", {
+		onUploadError: (error: Error) => {
+			alert("error" + error);
+		},
+	});
 	const val =
 		mediaLinks.map((vl) => ({
 			[vl?.value]: currentAccount.links.social[vl?.value],
@@ -67,7 +56,7 @@ const LinksForm = ({ account, user }: any) => {
 		resolver: zodResolver(AccountLinksValidation),
 		defaultValues: {
 			social: val || [],
-			custom: defaultCustomLinks,
+			custom: currentAccount.links.custom,
 		},
 	});
 
@@ -80,12 +69,33 @@ const LinksForm = ({ account, user }: any) => {
 	};
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
-		// console.log(data);
-		await updateLinksAccount({
-			userId: user,
-			data: data,
-			path: path,
-		});
+		console.log(icon);
+		const formData = new FormData();
+		data.custom.map(
+			(
+				value: {
+					icon?: string | undefined;
+					title?: string | undefined;
+					url?: string | undefined;
+					description?: string | undefined;
+				},
+				index: number
+			) => {
+				const hasIconsChanged = isBase64Image(
+					value.icon!,
+					currentAccount.links.custom[index]?.icon
+				);
+				if (hasIconsChanged) {
+					formData?.append("files", icon[index].toString());
+				}
+			}
+		);
+		// console.log(formData);
+		// await updateLinksAccount({
+		// 	userId: user,
+		// 	data: data,
+		// 	path: path,
+		// });
 		//TODO: add validation toast
 		alert("done");
 	}
@@ -119,9 +129,7 @@ const LinksForm = ({ account, user }: any) => {
 							setLinks={setMediaLinks}
 						/>
 						<h1 className="text-lg font-bold mt-5">Custom Links</h1>
-						<CustomLinksComponents
-							form={form}
-						/>
+						<CustomLinksComponents icon={icon} setIcon={setIcon} form={form} />
 						<SubmitButton className={"!w-full !p-3 !mt-4"}>Save</SubmitButton>
 					</form>
 				</Form>

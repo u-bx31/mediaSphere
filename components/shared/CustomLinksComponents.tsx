@@ -20,12 +20,16 @@ import ImageUpload from "./ImageUpload";
 import Image from "next/image";
 import { Button } from "../ui/button";
 
-const CustomLinksComponents = ({ form }: { form: any }) => {
-	const [icon, setIcon] = useState<{ file: File[]; url: string }>({
-		file: [],
-		url: "",
-	});
-	const { move, fields, remove, replace, append } = useFieldArray({
+const CustomLinksComponents = ({
+	form,
+	icon,
+	setIcon,
+}: {
+	form: any;
+	icon: any;
+	setIcon: any;
+}) => {
+	const { move, fields, remove, append } = useFieldArray({
 		control: form.control,
 		name: "custom",
 	});
@@ -53,7 +57,7 @@ const CustomLinksComponents = ({ form }: { form: any }) => {
 				}}
 				handle=".handle"
 				ghostClass="opacity-5"
-				className="!w-100 flex flex-col gap-3 mx-8  ">
+				className="!w-100 flex flex-col gap-5 mx-8  ">
 				{fields?.map((vl: any, index: number) => {
 					return (
 						<div
@@ -87,7 +91,7 @@ const CustomLinksComponents = ({ form }: { form: any }) => {
 												</FormLabel>
 												<ImageUpload
 													setFiles={(value: any) =>
-														setIcon((prev) => ({ ...prev, file: value }))
+														setIcon((prev: any) => [...prev, { file: value }])
 													}
 													form={form}
 													action={field.onChange}
@@ -98,7 +102,7 @@ const CustomLinksComponents = ({ form }: { form: any }) => {
 									}}
 								/>
 							</div>
-							<div className="flex flex-col !w-full gap-1">
+							<div className="flex flex-col !w-full">
 								<FormField
 									control={form.control}
 									name={`custom.${index}.title`}
