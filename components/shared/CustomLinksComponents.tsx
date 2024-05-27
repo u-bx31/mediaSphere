@@ -1,6 +1,12 @@
 "use client";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
-import { GripHorizontalIcon, PlusCircleIcon, PlusIcon, X } from "lucide-react";
+import {
+	GripHorizontalIcon,
+	Loader2Icon,
+	PlusCircleIcon,
+	PlusIcon,
+	X,
+} from "lucide-react";
 import {
 	UseFieldArrayReplace,
 	UseFormReturn,
@@ -19,20 +25,26 @@ import { Dispatch, SetStateAction, useState } from "react";
 import ImageUpload from "./ImageUpload";
 import Image from "next/image";
 import { Button } from "../ui/button";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const CustomLinksComponents = ({
 	form,
 	icon,
 	setIcon,
+	uploading,
+	setUploading,
 }: {
 	form: any;
 	icon: any;
 	setIcon: any;
+	uploading: any;
+	setUploading: any;
 }) => {
 	const { move, fields, remove, append } = useFieldArray({
 		control: form.control,
 		name: "custom",
 	});
+
 	const [links, setLinks] = useState(fields);
 	const linksEmpty = fields.length > 1;
 
@@ -44,6 +56,30 @@ const CustomLinksComponents = ({
 			description: "",
 		});
 	};
+	const { startUpload, isUploading } = useUploadThing("imageUploader", {
+		onUploadError: (error: Error) => {
+			alert("error" + error);
+		},
+	});
+	const handleUpload = async (file, index) => {
+		try {
+			const iconRes = await startUpload(file);
+			if (iconRes && iconRes[0].url) {
+				setIcon((prevIcons: { id: number; file: File[]; url: string }[]) => {
+					return prevIcons.map((icon: { id: number; file: File[]; url: string }) =>
+						icon.id === index ? { ...icon, url: iconRes[0].url.toString() } : icon
+					);
+				});
+				setUploading((prevLoading: any) => ({
+					...prevLoading,
+					[index]: false,
+				}));
+			}
+		} catch (error) {
+			console.error("Upload failed:", error);
+			return null;
+		}
+	};
 	return (
 		<>
 			<ReactSortable
@@ -54,6 +90,7 @@ const CustomLinksComponents = ({
 				delay={2}
 				onEnd={(cl) => {
 					move(cl.oldIndex as number, cl.newIndex as number);
+					//FIXME:
 				}}
 				handle=".handle"
 				ghostClass="opacity-5"
@@ -88,11 +125,46 @@ const CustomLinksComponents = ({
 													<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full rounded-full hidden group-hover:block group-hover:bg-gray-400 group-hover:bg-opacity-[60%] ">
 														<PlusCircleIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-gray-900 stroke-2  " />
 													</div>
+													{uploading[index] && (
+														<div className="absolute bottom-0 right-0  w-7 h-7 rounded-full bg-white shadow-md">
+															<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+																<Loader2Icon className="stroke-gray-900 stroke-[2px] animate-spin " />
+															</div>
+														</div>
+													)}
 												</FormLabel>
 												<ImageUpload
-													setFiles={(value: any) =>
-														setIcon((prev: any) => [...prev, { file: value }])
-													}
+													setFiles={async (value: any) => {
+														setUploading((prevLoading: any) => ({
+															...prevLoading,
+															[index]: true,
+														}));
+
+														setIcon(
+															(prevIcons: { id: number; file: File[]; url: string }[]) => {
+																const isUpdate = prevIcons.some(
+																	(icon: { id: number; file: File[]; url: string }) =>
+																		icon.id === index
+																);
+
+																if (isUpdate) {
+																	return prevIcons.map(
+																		(icon: { id: number; file: File[]; url: string }) =>
+																			icon.id === index ? { ...icon, file: value } : icon
+																	);
+																} else {
+																	return [...prevIcons, { id: index, file: value, url: "" }];
+																}
+															}
+														);
+
+														const fileUrl = await handleUpload(value, index);
+
+														if (!fileUrl) {
+															console.error("Failed to upload file");
+															return;
+														}
+													}}
 													form={form}
 													action={field.onChange}
 												/>
