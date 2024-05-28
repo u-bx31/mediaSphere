@@ -29,14 +29,10 @@ import { useUploadThing } from "@/lib/uploadthing";
 
 const CustomLinksComponents = ({
 	form,
-	icon,
-	setIcon,
 	uploading,
 	setUploading,
 }: {
 	form: any;
-	icon: any;
-	setIcon: any;
 	uploading: any;
 	setUploading: any;
 }) => {
@@ -56,20 +52,16 @@ const CustomLinksComponents = ({
 			description: "",
 		});
 	};
-	const { startUpload, isUploading } = useUploadThing("imageUploader", {
+	const { startUpload } = useUploadThing("imageUploader", {
 		onUploadError: (error: Error) => {
 			alert("error" + error);
 		},
 	});
-	const handleUpload = async (file, index) => {
+	const handleUpload = async (file: File[], index: number) => {
 		try {
 			const iconRes = await startUpload(file);
 			if (iconRes && iconRes[0].url) {
-				setIcon((prevIcons: { id: number; file: File[]; url: string }[]) => {
-					return prevIcons.map((icon: { id: number; file: File[]; url: string }) =>
-						icon.id === index ? { ...icon, url: iconRes[0].url.toString() } : icon
-					);
-				});
+				form.control._formValues.custom[index].icon = iconRes[0].url.toString();
 				setUploading((prevLoading: any) => ({
 					...prevLoading,
 					[index]: false,
@@ -90,7 +82,6 @@ const CustomLinksComponents = ({
 				delay={2}
 				onEnd={(cl) => {
 					move(cl.oldIndex as number, cl.newIndex as number);
-					//FIXME:
 				}}
 				handle=".handle"
 				ghostClass="opacity-5"
@@ -134,29 +125,11 @@ const CustomLinksComponents = ({
 													)}
 												</FormLabel>
 												<ImageUpload
-													setFiles={async (value: any) => {
-														setUploading((prevLoading: any) => ({
+													setFiles={async (value: File[]) => {
+														setUploading((prevLoading: Object) => ({
 															...prevLoading,
 															[index]: true,
 														}));
-
-														setIcon(
-															(prevIcons: { id: number; file: File[]; url: string }[]) => {
-																const isUpdate = prevIcons.some(
-																	(icon: { id: number; file: File[]; url: string }) =>
-																		icon.id === index
-																);
-
-																if (isUpdate) {
-																	return prevIcons.map(
-																		(icon: { id: number; file: File[]; url: string }) =>
-																			icon.id === index ? { ...icon, file: value } : icon
-																	);
-																} else {
-																	return [...prevIcons, { id: index, file: value, url: "" }];
-																}
-															}
-														);
 
 														const fileUrl = await handleUpload(value, index);
 

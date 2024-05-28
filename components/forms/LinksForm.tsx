@@ -40,9 +40,6 @@ const LinksForm = ({ account, user }: any) => {
 		(SocialLink | ItemInterface | undefined)[]
 	>(accountLinks || []);
 
-	const [icon, setIcon] = useState<{ id: number; file: File[]; url: string }[]>([
-		{ id: 0, file: [], url: "" },
-	]);
 	const [uploading, setUploading] = useState({});
 
 	const val =
@@ -68,24 +65,16 @@ const LinksForm = ({ account, user }: any) => {
 	const anyLoading = Object.values(uploading).some((isLoading) => isLoading);
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
-
-		// icon.map((iconObj) => {
-		// 	data.custom[iconObj.id].icon = iconObj.url
-		// });
-
-		console.log(icon);
-		console.log(data);
-
 		//TODO: try to get method to upload and save the icons on db
 
 		// console.log(formData);
-		// await updateLinksAccount({
-		// 	userId: user,
-		// 	data: data,
-		// 	path: path,
-		// });
+		await updateLinksAccount({
+			userId: user,
+			data: data,
+			path: path,
+		});
 		//TODO: add validation toast
-		// alert("done");
+		alert("done");
 	}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
@@ -118,8 +107,6 @@ const LinksForm = ({ account, user }: any) => {
 						/>
 						<h1 className="text-lg font-bold mt-5">Custom Links</h1>
 						<CustomLinksComponents
-							icon={icon}
-							setIcon={setIcon}
 							form={form}
 							uploading={uploading}
 							setUploading={setUploading}
