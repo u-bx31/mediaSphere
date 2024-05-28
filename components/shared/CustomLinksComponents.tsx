@@ -113,8 +113,17 @@ const CustomLinksComponents = ({
 															field?.value ? "rounded-full !w-full !h-full" : "!w-9 !h-9"
 														} object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`}
 													/>
-													<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full rounded-full hidden group-hover:block group-hover:bg-gray-400 group-hover:bg-opacity-[60%] ">
-														<PlusCircleIcon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-gray-900 stroke-2  " />
+													<div
+														className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full rounded-full hidden group-hover:block group-hover:bg-gray-400 group-hover:bg-opacity-[60%] ${
+															uploading[index] &&
+															"cursor-not-allowed bg-opacity-[40%] "
+														} `}>
+														<PlusCircleIcon
+															className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-gray-900 stroke-2 ${
+																uploading[index] &&
+																"bg-opacity-[70%] "
+															} `}
+														/>
 													</div>
 													{uploading[index] && (
 														<div className="absolute bottom-0 right-0  w-7 h-7 rounded-full bg-white shadow-md">
@@ -140,6 +149,7 @@ const CustomLinksComponents = ({
 													}}
 													form={form}
 													action={field.onChange}
+													disabled={uploading[index]}
 												/>
 												<FormMessage />
 											</FormItem>

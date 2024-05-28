@@ -2,7 +2,7 @@ import { ChangeEvent } from "react";
 import { FormControl } from "../ui/form";
 import { Input } from "../ui/input";
 
-const ImageUpload = ({ setFiles, setBg, field, action }: any) => {
+const ImageUpload = ({ setFiles, setBg, field, action, disabled }: any) => {
 	const handleImage = (
 		e: ChangeEvent<HTMLInputElement>,
 		fieldChange: (value: string) => void
@@ -28,6 +28,7 @@ const ImageUpload = ({ setFiles, setBg, field, action }: any) => {
 		<>
 			<FormControl>
 				<Input
+					disabled={disabled}
 					className="account-form_image-input hidden"
 					type="file"
 					placeholder="Upload your profile image"

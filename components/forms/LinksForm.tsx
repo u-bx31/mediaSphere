@@ -65,9 +65,7 @@ const LinksForm = ({ account, user }: any) => {
 	const anyLoading = Object.values(uploading).some((isLoading) => isLoading);
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
-		//TODO: try to get method to upload and save the icons on db
 
-		// console.log(formData);
 		await updateLinksAccount({
 			userId: user,
 			data: data,
