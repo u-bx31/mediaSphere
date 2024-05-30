@@ -41,10 +41,20 @@ const CustomLinksComponents = ({
 		name: "custom",
 	});
 
+	const [fadeAnimation, setFadeAnimation] = useState<{
+		enter: Number | null;
+		exit: Number | null;
+	}>({
+		enter: null,
+		exit: null,
+	});
+
 	const [links, setLinks] = useState(fields);
+	const [animation, setAnimation] = useState(false);
 	const linksEmpty = fields.length > 1;
 
 	const AddNewCustomLink = () => {
+		setFadeAnimation((prev) => ({ ...prev, enter: fields.length }));
 		append({
 			icon: "",
 			title: "",
@@ -52,6 +62,15 @@ const CustomLinksComponents = ({
 			description: "",
 		});
 	};
+
+	const handleRemove = (index: number) => {
+		setFadeAnimation((prev) => ({ ...prev, exit: index }));
+		setTimeout(() => {
+			remove(index);
+			setFadeAnimation((prev) => ({ ...prev, exit: null }));
+		}, 400);
+	};
+
 	const { startUpload } = useUploadThing("imageUploader", {
 		onUploadError: (error: Error) => {
 			alert("error" + error);
@@ -79,17 +98,20 @@ const CustomLinksComponents = ({
 				setList={setLinks}
 				animation={200}
 				delayOnTouchOnly
-				delay={2}
+				delay={1000}
 				onEnd={(cl) => {
 					move(cl.oldIndex as number, cl.newIndex as number);
 				}}
 				handle=".handle"
 				ghostClass="opacity-5"
-				className="!w-100 flex flex-col gap-5 mx-8  ">
+				className="!w-100 flex flex-col gap-5 mx-8 ">
 				{fields?.map((vl: any, index: number) => {
 					return (
 						<div
-							className="!w-100 !h-full flex flex-row gap-4 items-center"
+							//TODO:work on adding and removing animation
+							className={`!w-100 !h-full flex flex-row gap-4 items-center ${
+								fadeAnimation.exit === index && "fade-exit"
+							} ${fadeAnimation.enter === index && "fade-enter"} `}
 							key={vl?.id}>
 							{linksEmpty && (
 								<GripHorizontalIcon className="w-5 h-5 stroke-gray-400 handle cursor-pointer" />
@@ -115,13 +137,11 @@ const CustomLinksComponents = ({
 													/>
 													<div
 														className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full rounded-full hidden group-hover:block group-hover:bg-gray-400 group-hover:bg-opacity-[60%] ${
-															uploading[index] &&
-															"cursor-not-allowed bg-opacity-[40%] "
+															uploading[index] && "cursor-not-allowed bg-opacity-[40%] "
 														} `}>
 														<PlusCircleIcon
 															className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 stroke-gray-900 stroke-2 ${
-																uploading[index] &&
-																"bg-opacity-[70%] "
+																uploading[index] && "bg-opacity-[70%] "
 															} `}
 														/>
 													</div>
@@ -220,7 +240,7 @@ const CustomLinksComponents = ({
 							<button
 								type="button"
 								className="group bg-white hover:bg-red-500/80 border border-red-500 hover:border-red-500/60 !h-100 rounded-full p-1 transition-all "
-								onClick={() => remove(index)}>
+								onClick={() => handleRemove(index)}>
 								<X className="w-3 h-3 stroke-red-500 group-hover:stroke-white stroke-[3]" />
 							</button>
 						</div>
