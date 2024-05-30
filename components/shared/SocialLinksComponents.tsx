@@ -1,18 +1,24 @@
 "use client";
 import { ItemInterface, ReactSortable } from "react-sortablejs";
 import { GripHorizontalIcon, X } from "lucide-react";
-import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
 import { SocialLink } from "@/constants/types";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 const SocialLinksComponents = ({
 	links,
+	fadeAnimation,
+	setFadeAnimation,
 	setLinks,
 	form,
 }: {
 	links: (SocialLink | ItemInterface | undefined)[];
+	fadeAnimation: { enter: Number | null; exit: Number | null };
+	setFadeAnimation: Dispatch<
+		SetStateAction<{ enter: Number | null; exit: Number | null }>
+	>;
 	setLinks: Dispatch<SetStateAction<(SocialLink | ItemInterface | undefined)[]>>;
 	form: any;
 }) => {
@@ -22,9 +28,16 @@ const SocialLinksComponents = ({
 	});
 
 	const handleRemoveOptions = (val: string, index: number) => {
-		setLinks(links.filter((vl) => vl?.value !== val));
-		form.control._formValues.social?.splice(index, 1);
-		((form.control._fields.social ?? []) as unknown as Array<any>).splice(index, 1);
+		setFadeAnimation((prev) => ({ ...prev, exit: index }));
+		setTimeout(() => {
+			setLinks(links.filter((vl) => vl?.value !== val));
+			form.control._formValues.social?.splice(index, 1);
+			((form.control._fields.social ?? []) as unknown as Array<any>).splice(
+				index,
+				1
+			);
+			setFadeAnimation((prev) => ({ ...prev, exit: null }));
+		}, 300);
 	};
 
 	return (
@@ -42,7 +55,11 @@ const SocialLinksComponents = ({
 			className="!w-100 flex flex-col gap-3 mx-8 mt-5 ">
 			{links?.map((vl, index: number) => {
 				return (
-					<div className="!w-100 flex flex-row gap-3 items-center" key={vl?.value}>
+					<div
+						className={`!w-100 flex flex-row gap-3 items-center ${
+							fadeAnimation.exit === index && "fade-exit"
+						} ${fadeAnimation.enter === index && "fade-enter"} `}
+						key={vl?.value}>
 						<GripHorizontalIcon className="w-5 h-5 stroke-gray-400 handle cursor-pointer" />
 						<div className="">{vl?.icon}</div>
 						<FormField

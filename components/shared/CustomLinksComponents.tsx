@@ -1,5 +1,5 @@
 "use client";
-import { ItemInterface, ReactSortable } from "react-sortablejs";
+import { ReactSortable } from "react-sortablejs";
 import {
 	GripHorizontalIcon,
 	Loader2Icon,
@@ -8,8 +8,6 @@ import {
 	X,
 } from "lucide-react";
 import {
-	UseFieldArrayReplace,
-	UseFormReturn,
 	useFieldArray,
 } from "react-hook-form";
 import {
@@ -20,8 +18,7 @@ import {
 	FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { SocialLink } from "@/constants/types";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import ImageUpload from "./ImageUpload";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -50,7 +47,6 @@ const CustomLinksComponents = ({
 	});
 
 	const [links, setLinks] = useState(fields);
-	const [animation, setAnimation] = useState(false);
 	const linksEmpty = fields.length > 1;
 
 	const AddNewCustomLink = () => {
@@ -68,7 +64,7 @@ const CustomLinksComponents = ({
 		setTimeout(() => {
 			remove(index);
 			setFadeAnimation((prev) => ({ ...prev, exit: null }));
-		}, 400);
+		}, 300);
 	};
 
 	const { startUpload } = useUploadThing("imageUploader", {

@@ -59,13 +59,21 @@ const LinksForm = ({ account, user }: any) => {
 		(link) => !mediaLinks.find((v1) => link.value === v1?.value)
 	);
 
+	const [fadeAnimation, setFadeAnimation] = useState<{
+		enter: Number | null;
+		exit: Number | null;
+	}>({
+		enter: null,
+		exit: null,
+	});
+
 	const handleAddingLinks = (val: any) => {
+		setFadeAnimation((prev) => ({ ...prev, enter: mediaLinks.length }));
 		setMediaLinks((prev) => [...prev, val]);
 	};
 	const anyLoading = Object.values(uploading).some((isLoading) => isLoading);
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
-
 		await updateLinksAccount({
 			userId: user,
 			data: data,
@@ -99,6 +107,8 @@ const LinksForm = ({ account, user }: any) => {
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="flex flex-col gap-2 ">
 						<SocialLinksComponents
+							fadeAnimation={fadeAnimation}
+							setFadeAnimation={setFadeAnimation}
 							form={form}
 							links={mediaLinks}
 							setLinks={setMediaLinks}
