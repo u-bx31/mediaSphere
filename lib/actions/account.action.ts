@@ -92,11 +92,6 @@ export async function UpdateUserAccount({
 	} else {
 		try {
 			if (user) {
-				let currentState = "links";
-
-				if (userAccount?.state == "completed") {
-					currentState = "completed";
-				}
 				await Account.findOneAndUpdate(
 					{ createdBy: user?._id },
 					{
@@ -109,7 +104,7 @@ export async function UpdateUserAccount({
 							value: bgValue?.toString(),
 						},
 						bio: bio?.toLowerCase(),
-						state: currentState,
+						state: userAccount?.state || "links",
 					},
 					{ upsert: true }
 				).then(() => {
@@ -152,7 +147,7 @@ export async function updateLinksAccount({
 				{ createdBy: user?._id },
 				{
 					links: { social: combinedObject, custom: data.custom },
-					state: 'completed',
+					state: "completed",
 				},
 				{ upsert: true }
 			).then(() => {

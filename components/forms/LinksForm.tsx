@@ -31,6 +31,8 @@ const LinksForm = ({ account, user }: any) => {
 		(SocialLink | ItemInterface | undefined)[]
 	>(accountLinks || []);
 
+	const [loading, setLoading] = useState(false);
+
 	const [uploading, setUploading] = useState({});
 	const { push } = useRouter();
 	const val =
@@ -65,6 +67,7 @@ const LinksForm = ({ account, user }: any) => {
 	const anyLoading = Object.values(uploading).some((isLoading) => isLoading);
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
+		setLoading(true)
 		await updateLinksAccount({
 			userId: user,
 			data: data,
@@ -75,7 +78,8 @@ const LinksForm = ({ account, user }: any) => {
 				variant: "default",
 				icon: true,
 			});
-			// push("/account");
+			setLoading(false)
+			push("/account");
 		});
 	}
 	return (
@@ -115,7 +119,7 @@ const LinksForm = ({ account, user }: any) => {
 							uploading={uploading}
 							setUploading={setUploading}
 						/>
-						<SubmitButton className={`!w-full !p-3 !mt-4 `} disable={anyLoading}>
+						<SubmitButton className={`!w-full !p-3 !mt-4 `} disable={anyLoading} loading={loading}>
 							Save
 						</SubmitButton>
 					</form>

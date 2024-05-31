@@ -61,7 +61,7 @@ const ProfileForm = ({ user, account }: any) => {
 		url:
 			currentAccount?.background?.type == "image" &&
 			currentAccount?.background?.value,
-		colorValue: "#f0f0f0",
+		colorValue: "",
 	});
 
 	const { startUpload } = useUploadThing("imageUploader", {
@@ -103,7 +103,6 @@ const ProfileForm = ({ user, account }: any) => {
 	});
 
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
-		
 		setLoading((prev) => ({ ...prev, button: true }));
 		const hasAvatarChanged =
 			currentAccount?.image &&
@@ -143,37 +142,45 @@ const ProfileForm = ({ user, account }: any) => {
 			setLoading((prev) => ({ ...prev, button: false }));
 		}
 
-		await UpdateUserAccount({
-			userId: currentUser?.id,
-			userName: data.userName?.toString(),
-			displayName: data.displayName?.toString(),
-			bgType: background.type || "color",
-			avatar: avatar.url || data.avatar || "",
-			bgValue:
-				background.type === "image"
-					? data.bg_image || background.url
-					: background.colorValue || "",
-			location: data.location?.toString(),
-			bio: data.bio?.toString(),
-			path: path,
-		}).then((res) => {
+		if (!data.bg_image || (!background.url && background.type === "image")) {
 			setLoading((prev) => ({ ...prev, button: false }));
-			if (res?.message) {
-				form.control.setError("userName", {
-					type: "manual",
-					message: res?.message,
-				});
-			} else {
-				localStorage.removeItem(target_username);
-				toast({
-					title: "Successfully saved new changes",
-					variant: "default",
-					icon: true,
-				});
-				//for edit will verify if we have searchparm of edit will eliminate this push and also will not update state of account
-				push("/account/links");
-			}
-		});
+			toast({
+				title: "Background image can't be empty",
+				variant: "destructive",
+			});
+		} else {
+			await UpdateUserAccount({
+				userId: currentUser?.id,
+				userName: data.userName?.toString(),
+				displayName: data.displayName?.toString(),
+				bgType: background.type || "color",
+				avatar: avatar.url || data.avatar || "",
+				bgValue:
+					background.type === "image"
+						? data.bg_image || background.url
+						: background.colorValue || "",
+				location: data.location?.toString(),
+				bio: data.bio?.toString(),
+				path: path,
+			}).then((res) => {
+				setLoading((prev) => ({ ...prev, button: false }));
+				if (res?.message) {
+					form.control.setError("userName", {
+						type: "manual",
+						message: res?.message,
+					});
+				} else {
+					localStorage.removeItem(target_username);
+					toast({
+						title: "Successfully saved new changes",
+						variant: "default",
+						icon: true,
+					});
+					//for edit will verify if we have searchparm of edit will eliminate this push and also will not update state of account
+					push("/account/links");
+				}
+			});
+		}
 	}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">

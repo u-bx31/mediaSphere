@@ -5,7 +5,6 @@ import { useEffect } from "react";
 
 const AccountComponent = ({ userAccount }: any) => {
 	const currentAccount = JSON.parse(userAccount);
-	console.log(currentAccount);
 	const { push } = useRouter();
 
 	useEffect(() => {
