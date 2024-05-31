@@ -19,7 +19,6 @@ const accountSchema = new mongoose.Schema({
 			title: { type: String },
 			icon: { type: String },
 			url: { type: String },
-			description: { type: String },
 		},
 	},
 	state: { type: String, required: true, default: "info" },

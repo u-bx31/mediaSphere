@@ -1,8 +1,10 @@
 import HeroForm from "@/components/forms/HeroForm";
+import { findUserAccount } from "@/lib/actions/account.action";
 import { currentUser } from "@clerk/nextjs";
 
 export default async function Home() {
 	const user = await currentUser();
+	const { data: account } = await findUserAccount(user?.id || "");
 	return (
 		<div className="container flex flex-col justify-center items-center">
 			<section className="relative">
@@ -19,7 +21,7 @@ export default async function Home() {
 							Share your links, social media profiles, contact info and more on just
 							one page
 						</p>
-						<HeroForm user={JSON.stringify(user)} />
+						<HeroForm user={JSON.stringify(user)} account={JSON.stringify(account)}/>
 					</div>
 				</div>
 			</section>

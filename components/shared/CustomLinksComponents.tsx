@@ -173,7 +173,7 @@ const CustomLinksComponents = ({
 									}}
 								/>
 							</div>
-							<div className="flex flex-col !w-full">
+							<div className="flex flex-col !w-full gap-2">
 								<FormField
 									control={form.control}
 									name={`custom.${index}.title`}
@@ -183,7 +183,7 @@ const CustomLinksComponents = ({
 												<FormLabel className="font-semibold">Title</FormLabel>
 												<FormControl>
 													<Input
-														className="!w-full text-start p-4 "
+														className="!w-full text-start p-4 !mt-1"
 														placeholder="Title"
 														{...field}
 													/>
@@ -202,27 +202,8 @@ const CustomLinksComponents = ({
 												<FormLabel className="font-semibold">Your Link</FormLabel>
 												<FormControl>
 													<Input
-														className="!w-full text-start p-4 "
+														className="!w-full text-start p-4 !mt-1"
 														placeholder="https://example.com"
-														{...field}
-													/>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										);
-									}}
-								/>
-								<FormField
-									control={form.control}
-									name={`custom.${index}.description`}
-									render={({ field }) => {
-										return (
-											<FormItem className="!w-full">
-												<FormLabel className="font-semibold">Description</FormLabel>
-												<FormControl>
-													<Input
-														className="!w-full text-start p-4 "
-														placeholder="Description"
 														{...field}
 													/>
 												</FormControl>

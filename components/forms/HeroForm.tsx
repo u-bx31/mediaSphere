@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import SubmitButton from "../shared/SubmitButton";
 import { useState } from "react";
 
-const HeroForm = ({ user }: any) => {
+const HeroForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
 	const [btnLoading, setBtnLoading] = useState(false);
 	const { push } = useRouter();
@@ -14,9 +14,17 @@ const HeroForm = ({ user }: any) => {
 		setBtnLoading(true);
 		const formData = new FormData(e.target as HTMLFormElement);
 		const userName = formData.get("userName") as string;
-		console.log(currentUser);
+
 		if (currentUser?.id) {
-			push("/account");
+			const userAccount = JSON.parse(account);
+			if (userAccount) {
+				if (userAccount.state === "completed") {
+					push("/account");
+				} else {
+					push(`/account/${userAccount.state}`);
+				}
+			}
+			push("/account/info");
 		} else {
 			if (userName.length < 2 || userName.length > 20) {
 				setBtnLoading(false);

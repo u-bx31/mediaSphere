@@ -92,18 +92,24 @@ export async function UpdateUserAccount({
 	} else {
 		try {
 			if (user) {
+				let currentState = "links";
+
+				if (userAccount?.state == "completed") {
+					currentState = "completed";
+				}
 				await Account.findOneAndUpdate(
 					{ createdBy: user?._id },
 					{
 						userName: userName?.toLowerCase(),
-						location: location?.toLowerCase(),
-						displayName: displayName?.toLowerCase(),
-						image: avatar.toLocaleLowerCase(),
+						location: location,
+						displayName: displayName,
+						image: avatar,
 						background: {
 							type: bgType.toLowerCase(),
 							value: bgValue?.toString(),
 						},
 						bio: bio?.toLowerCase(),
+						state: currentState,
 					},
 					{ upsert: true }
 				).then(() => {
@@ -134,6 +140,7 @@ export async function updateLinksAccount({
 	const userAccount = await Account.findOne({ userName: user?.userName });
 	try {
 		if (user) {
+			//reconsider
 			let currentState = "links";
 
 			if (userAccount?.state == "completed") {

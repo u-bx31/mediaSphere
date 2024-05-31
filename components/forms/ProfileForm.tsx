@@ -55,13 +55,13 @@ const ProfileForm = ({ user, account }: any) => {
 	});
 
 	const [background, setBackground] = useState<Background>({
-		type: currentAccount.background.type || "color",
-		value: currentAccount.background?.value || "",
+		type: currentAccount?.background.type || "color",
+		value: currentAccount?.background?.value || "",
 		imgFile: [],
 		url:
-			currentAccount.background?.type == "image" &&
-			currentAccount.background?.value,
-		colorValue: "",
+			currentAccount?.background?.type == "image" &&
+			currentAccount?.background?.value,
+		colorValue: "#f0f0f0",
 	});
 
 	const { startUpload } = useUploadThing("imageUploader", {
@@ -78,17 +78,24 @@ const ProfileForm = ({ user, account }: any) => {
 	const { push } = useRouter();
 
 	useEffect(() => {
-		setBackground((prev) => ({ ...prev, type: currentAccount.background.type }));
+		setBackground((prev) => ({
+			...prev,
+			type: currentAccount?.background.type || "color",
+		}));
 		if (currentAccount || currentUser) {
 			setLoading((prev) => ({ ...prev, form: false }));
 		}
 	}, []);
 
+	const target_username =
+		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
+		"";
+
 	const form = useForm<z.infer<typeof AccountValidation>>({
 		resolver: zodResolver(AccountValidation),
 		defaultValues: {
-			userName: currentAccount?.userName || "",
-			avatar: currentAccount.image || currentUser?.image || "",
+			userName: currentAccount?.userName || target_username || "",
+			avatar: currentAccount?.image || currentUser?.image || "",
 			displayName: currentAccount?.displayName || "",
 			location: currentAccount?.location || "",
 			bio: currentAccount?.bio || "",
@@ -96,24 +103,20 @@ const ProfileForm = ({ user, account }: any) => {
 	});
 
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
-		const bgImg = data.bg_image?.toString();
+		
 		setLoading((prev) => ({ ...prev, button: true }));
-
-		const hasImageChanged = isBase64Image(
-			avatar.url || data.avatar!,
-			currentAccount.image
-		);
-		const hasBgImageChanged = isBase64Image(
-			background.url || data.bg_image!,
-			currentAccount.background.value
-		);
-
-		{
-			/* FIXME: fix problem when upload file and save than we change input.value and save it will upload another file  */
-		}
+		const hasAvatarChanged =
+			currentAccount?.image &&
+			isBase64Image(avatar.url || data.avatar!, currentAccount.image);
+		const hasBgImageChanged =
+			currentAccount?.background.value &&
+			isBase64Image(
+				background.url || data.bg_image!,
+				currentAccount.background.value
+			);
 
 		let imgRes: any;
-		if (hasImageChanged) {
+		if (hasAvatarChanged) {
 			try {
 				imgRes = await startUpload(avatar.file);
 				if (imgRes && imgRes[0].url) {
@@ -121,7 +124,7 @@ const ProfileForm = ({ user, account }: any) => {
 					data.avatar = imgRes[0].url;
 				}
 			} catch (error: any) {
-				console.log('upload avatar',error);
+				console.log("upload avatar", error);
 			}
 		}
 		if (hasBgImageChanged) {
@@ -132,7 +135,7 @@ const ProfileForm = ({ user, account }: any) => {
 					data.bg_image = imgRes[0].url;
 				}
 			} catch (error: any) {
-				console.log('upload banner',error);
+				console.log("upload banner", error);
 			}
 		}
 
@@ -140,9 +143,6 @@ const ProfileForm = ({ user, account }: any) => {
 			setLoading((prev) => ({ ...prev, button: false }));
 		}
 
-		{
-			/* 3 TODO: Save the background value on session or on cookies  */
-		}
 		await UpdateUserAccount({
 			userId: currentUser?.id,
 			userName: data.userName?.toString(),
@@ -164,11 +164,13 @@ const ProfileForm = ({ user, account }: any) => {
 					message: res?.message,
 				});
 			} else {
+				localStorage.removeItem(target_username);
 				toast({
 					title: "Successfully saved new changes",
 					variant: "default",
 					icon: true,
 				});
+				//for edit will verify if we have searchparm of edit will eliminate this push and also will not update state of account
 				push("/account/links");
 			}
 		});
@@ -187,8 +189,8 @@ const ProfileForm = ({ user, account }: any) => {
 						style={{
 							backgroundColor:
 								background.colorValue ||
-								(currentAccount.background.type == "color" &&
-									currentAccount.background.value) ||
+								(currentAccount?.background.type == "color" &&
+									currentAccount?.background.value) ||
 								"#f0f0f0",
 						}}
 						className="w-full h-40 md:h-52 relative transition-all ease-linear">
@@ -241,7 +243,7 @@ const ProfileForm = ({ user, account }: any) => {
 															type="color"
 															className="absolute w-100 h-[10px] -top-1 -left-1 -z-10 bg-transparent"
 															{...field}
-															defaultValue={currentAccount.background.value}
+															defaultValue={currentAccount?.background.value}
 															onChange={(e: any) => {
 																setBackground((prev) => ({
 																	...prev,

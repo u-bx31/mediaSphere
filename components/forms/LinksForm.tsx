@@ -1,38 +1,29 @@
 "use client";
 import { mediaOptions } from "@/constants";
-import { GripHorizontalIcon, Plus, PlusIcon, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { AccountLinksValidation } from "@/lib/validations/account";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { ItemInterface, ReactSortable } from "react-sortablejs";
-import { object, z } from "zod";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { ItemInterface } from "react-sortablejs";
+import { z } from "zod";
+import { Form } from "@/components/ui/form";
 import SubmitButton from "../shared/SubmitButton";
 import { updateLinksAccount } from "@/lib/actions/account.action";
 import { usePathname } from "next/navigation";
 import { SocialLink } from "@/constants/types";
 import SocialLinksComponents from "../shared/SocialLinksComponents";
 import CustomLinksComponents from "../shared/CustomLinksComponents";
-import { Button } from "../ui/button";
-import { isBase64Image } from "@/lib/utils";
-import { useUploadThing } from "@/lib/uploadthing";
+import { toast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
 
 const LinksForm = ({ account, user }: any) => {
 	const currentAccount = JSON.parse(account);
 	const path = usePathname();
 
 	const accountLinks: (SocialLink | undefined)[] =
-		currentAccount.links.social &&
-		Object.keys(currentAccount.links.social)?.map((k) =>
+		currentAccount?.links?.social &&
+		Object.keys(currentAccount?.links?.social)?.map((k) =>
 			mediaOptions.find((b) => b.value === k)
 		);
 
@@ -41,17 +32,17 @@ const LinksForm = ({ account, user }: any) => {
 	>(accountLinks || []);
 
 	const [uploading, setUploading] = useState({});
-
+	const { push } = useRouter();
 	const val =
 		mediaLinks.map((vl) => ({
-			[vl?.value]: currentAccount.links.social[vl?.value],
+			[vl?.value]: currentAccount?.links?.social[vl?.value],
 		})) || [];
 
 	const form = useForm<z.infer<typeof AccountLinksValidation>>({
 		resolver: zodResolver(AccountLinksValidation),
 		defaultValues: {
 			social: val || [],
-			custom: currentAccount.links.custom,
+			custom: currentAccount?.links?.custom,
 		},
 	});
 
@@ -78,9 +69,14 @@ const LinksForm = ({ account, user }: any) => {
 			userId: user,
 			data: data,
 			path: path,
+		}).then(() => {
+			toast({
+				title: "Successfully saved new changes",
+				variant: "default",
+				icon: true,
+			});
+			// push("/account");
 		});
-		//TODO: add validation toast
-		alert("done");
 	}
 	return (
 		<div className="bg-white rounded-xl overflow-hidden w-full lg:w-[1000px] relative">
