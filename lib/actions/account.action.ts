@@ -140,12 +140,6 @@ export async function updateLinksAccount({
 	const userAccount = await Account.findOne({ userName: user?.userName });
 	try {
 		if (user) {
-			//reconsider
-			let currentState = "links";
-
-			if (userAccount?.state == "completed") {
-				currentState = "completed";
-			}
 			const combinedObject = data?.social.reduce((acc: any, obj: any) => {
 				// Extract the key and value from the object
 				const [key, value] = Object.entries(obj)[0];
@@ -158,7 +152,7 @@ export async function updateLinksAccount({
 				{ createdBy: user?._id },
 				{
 					links: { social: combinedObject, custom: data.custom },
-					state: currentState,
+					state: 'completed',
 				},
 				{ upsert: true }
 			).then(() => {
