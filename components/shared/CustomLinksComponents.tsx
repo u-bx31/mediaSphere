@@ -33,6 +33,7 @@ const CustomLinksComponents = ({
 	uploading: any;
 	setUploading: any;
 }) => {
+	
 	const { move, fields, remove, append } = useFieldArray({
 		control: form.control,
 		name: "custom",

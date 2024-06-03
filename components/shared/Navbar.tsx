@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
+import { UserAccount } from "@/constants/types";
 
 const Navbar = ({ user, userAccount }: any) => {
 	const currentUser = JSON.parse(user);
@@ -31,12 +32,12 @@ const Navbar = ({ user, userAccount }: any) => {
 
 	let profileLink = "/account";
 
-	if (userAccount.data) {
-		const currentAccount = JSON.parse(userAccount);
-		if (currentAccount.data?.state == "completed") {
+	if (userAccount) {
+		const currentAccount: UserAccount = JSON.parse(userAccount);
+		if (currentAccount?.state == "completed") {
 			profileLink = "/account";
 		} else {
-			profileLink = `/account/${currentAccount.data?.state.toString()}`;
+			profileLink = `/account/${currentAccount?.state.toString()}`;
 		}
 	}
 

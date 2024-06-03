@@ -31,6 +31,7 @@ import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
 import { usePathname, useRouter } from "next/navigation";
 import { options } from "@/constants";
+import { UserAccount } from "@/constants/types";
 
 type Background = {
 	type: string;
@@ -42,7 +43,7 @@ type Background = {
 
 const ProfileForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
-	const currentAccount = JSON.parse(account);
+	const currentAccount: UserAccount = JSON.parse(account);
 
 	const [loading, setLoading] = useState({
 		form: true,
@@ -59,8 +60,9 @@ const ProfileForm = ({ user, account }: any) => {
 		value: currentAccount?.background?.value || "",
 		imgFile: [],
 		url:
-			currentAccount?.background?.type == "image" &&
-			currentAccount?.background?.value,
+			(currentAccount?.background?.type == "image" &&
+				currentAccount?.background?.value.toString()) ||
+			"",
 		colorValue: "",
 	});
 

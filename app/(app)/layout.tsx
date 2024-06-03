@@ -10,12 +10,12 @@ export default async function RootLayout({
 }>) {
 	const user = await currentUser();
 	const userInfo = await fetchUser(user?.id || "");
-	const userAccount = await findUserAccount(user?.id || "");
+	const {data:account} = await findUserAccount(user?.id || "");
 	return (
 		<div className="flex flex-col gap-3">
 			<Navbar
 				user={JSON.stringify(userInfo)}
-				userAccount={JSON.stringify(userAccount)}
+				userAccount={JSON.stringify(account)}
 			/>
 			{children}
 		</div>

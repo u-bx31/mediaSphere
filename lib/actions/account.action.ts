@@ -4,6 +4,7 @@ import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 import Account from "../models/account.model";
 import { revalidatePath } from "next/cache";
+import { UserAccount } from "@/constants/types";
 
 interface AccountUserProps {
 	userId: string;
@@ -20,11 +21,11 @@ export async function findUserAccount(userId: string) {
 		};
 	}
 	try {
-		const data = await Account.findOne({ createdBy: currentUser?._id }).then(
-			(res) => {
-				return res;
-			}
-		);
+		const data = await Account.findOne({
+			createdBy: currentUser?._id,
+		}).then((res) => {
+			return res;
+		});
 		return { data };
 	} catch (error: any) {
 		throw new Error(`Failed to fetch user :${error}`);

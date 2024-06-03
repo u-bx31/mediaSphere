@@ -29,16 +29,17 @@ const HeroForm = ({ user, account }: any) => {
 		}
 
 		if (currentUser?.id) {
-			
-			if (account.data) {
+			if (account) {
 				const userAccount = JSON.parse(account);
+				console.log(userAccount);
 				if (userAccount.state === "completed") {
 					push("/account");
 				} else {
 					push(`/account/${userAccount.state}`);
 				}
+			} else {
+				push("/account/info");
 			}
-			push("/account/info");
 		} else {
 			if (userName.length < 2 || userName.length > 20) {
 				setBtnLoading(false);
