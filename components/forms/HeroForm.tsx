@@ -31,7 +31,6 @@ const HeroForm = ({ user, account }: any) => {
 		if (currentUser?.id) {
 			if (account) {
 				const userAccount = JSON.parse(account);
-				console.log(userAccount);
 				if (userAccount.state === "completed") {
 					push("/account");
 				} else {
