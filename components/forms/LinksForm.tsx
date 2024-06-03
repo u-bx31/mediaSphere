@@ -67,7 +67,7 @@ const LinksForm = ({ account, user }: any) => {
 	const anyLoading = Object.values(uploading).some((isLoading) => isLoading);
 
 	async function onSubmit(data: z.infer<typeof AccountLinksValidation>) {
-		setLoading(true)
+		setLoading(true);
 		await updateLinksAccount({
 			userId: user,
 			data: data,
@@ -78,7 +78,10 @@ const LinksForm = ({ account, user }: any) => {
 				variant: "default",
 				icon: true,
 			});
-			setLoading(false)
+			setLoading(false);
+			/*
+				verify if account state complete then we don't use push 
+			*/
 			push("/account");
 		});
 	}
@@ -119,7 +122,10 @@ const LinksForm = ({ account, user }: any) => {
 							uploading={uploading}
 							setUploading={setUploading}
 						/>
-						<SubmitButton className={`!w-full !p-3 !mt-4 `} disable={anyLoading} loading={loading}>
+						<SubmitButton
+							className={`!w-full !p-3 !mt-4 `}
+							disable={anyLoading}
+							loading={loading}>
 							Save
 						</SubmitButton>
 					</form>

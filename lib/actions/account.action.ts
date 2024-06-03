@@ -31,34 +31,34 @@ export async function findUserAccount(userId: string) {
 	}
 }
 
-export async function CreateUserAccount({
-	userId,
-	userName,
-	path,
-}: AccountUserProps) {
-	ConnectionToDb();
-	const user = await User.findOne({ id: userId });
-	const userAccount = await Account.findOne({ userName: userName });
-	if (userAccount) {
-		return {
-			message: "This userName already taken",
-		};
-	}
-	try {
-		if (user) {
-			await Account.create({
-				userName: userName?.toLowerCase(),
-				createdBy: user?._id,
-			});
-		} else {
-			return {
-				message: "This user not found",
-			};
-		}
-	} catch (error: any) {
-		throw new Error(`Failed to create/update user :${error.message}`);
-	}
-}
+// export async function CreateUserAccount({
+// 	userId,
+// 	userName,
+// 	path,
+// }: AccountUserProps) {
+// 	ConnectionToDb();
+// 	const user = await User.findOne({ id: userId });
+// 	const userAccount = await Account.findOne({ userName: userName });
+// 	if (userAccount) {
+// 		return {
+// 			message: "This userName already taken",
+// 		};
+// 	}
+// 	try {
+// 		if (user) {
+// 			await Account.create({
+// 				userName: userName?.toLowerCase(),
+// 				createdBy: user?._id,
+// 			});
+// 		} else {
+// 			return {
+// 				message: "This user not found",
+// 			};
+// 		}
+// 	} catch (error: any) {
+// 		throw new Error(`Failed to create/update user :${error.message}`);
+// 	}
+// }
 
 export async function UpdateUserAccount({
 	userId,

@@ -7,17 +7,31 @@ import { useState } from "react";
 
 const HeroForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
+
 	const [btnLoading, setBtnLoading] = useState(false);
+
 	const { push } = useRouter();
+
 	const handleSubmit = (e: React.SyntheticEvent) => {
 		e.preventDefault();
 		setBtnLoading(true);
+
 		const formData = new FormData(e.target as HTMLFormElement);
 		const userName = formData.get("userName") as string;
 
+		if (!account) {
+			setBtnLoading(false);
+			toast({
+				title: "Validation error",
+				description: "Something Wrong,try again later",
+				variant: "destructive",
+			});
+		}
+
 		if (currentUser?.id) {
-			const userAccount = JSON.parse(account);
-			if (userAccount) {
+			
+			if (account.data) {
+				const userAccount = JSON.parse(account);
 				if (userAccount.state === "completed") {
 					push("/account");
 				} else {

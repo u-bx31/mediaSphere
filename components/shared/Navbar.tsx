@@ -24,19 +24,25 @@ import {
 import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
 
-const Navbar = ({ user }: any) => {
+const Navbar = ({ user, userAccount }: any) => {
 	const currentUser = JSON.parse(user);
 	const { push } = useRouter();
 	const pathname = usePathname();
 
-	{
-		/* TODO: validate the status of the account and put the value on href of profile section if 'complete' than we redirect to /profile */
+	let profileLink = "/account";
+
+	if (userAccount.data) {
+		const currentAccount = JSON.parse(userAccount);
+		if (currentAccount.data?.state == "completed") {
+			profileLink = "/account";
+		} else {
+			profileLink = `/account/${currentAccount.data?.state.toString()}`;
+		}
 	}
-	
+
 	return (
 		<nav className="navbar-class">
-			<div
-				className={`flex flex-wrap items-center justify-between mx-auto  `}>
+			<div className={`flex flex-wrap items-center justify-between mx-auto  `}>
 				<div className="flex flex-row items-center">
 					<div className="md:hidden">
 						<Sheet>
@@ -101,7 +107,7 @@ const Navbar = ({ user }: any) => {
 								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem className="cursor-pointer">
-									<Link href={"/account"} className="flex flex-row items-center gap-3">
+									<Link href={profileLink} className="flex flex-row items-center gap-3">
 										<User className="w-5 h-5" />
 										<h3 className="text-base ">Profile</h3>
 									</Link>

@@ -141,8 +141,9 @@ const ProfileForm = ({ user, account }: any) => {
 		if (imgRes) {
 			setLoading((prev) => ({ ...prev, button: false }));
 		}
+		console.log(data.bg_image);
 
-		if (!data.bg_image || (!background.url && background.type === "image")) {
+		if (background.type === "image" && data.bg_image == undefined) {
 			setLoading((prev) => ({ ...prev, button: false }));
 			toast({
 				title: "Background image can't be empty",
@@ -176,7 +177,10 @@ const ProfileForm = ({ user, account }: any) => {
 						variant: "default",
 						icon: true,
 					});
-					//for edit will verify if we have searchparm of edit will eliminate this push and also will not update state of account
+
+					/*
+						verify if account state complete then we don't use push 
+					*/
 					push("/account/links");
 				}
 			});
