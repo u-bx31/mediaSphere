@@ -49,7 +49,6 @@ const ProfileForm = ({ user, account }: any) => {
 	const target_username =
 		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
 		"";
-
 	const [loading, setLoading] = useState({
 		form: true,
 		button: false,
@@ -87,9 +86,6 @@ const ProfileForm = ({ user, account }: any) => {
 	const path = usePathname();
 	const { push } = useRouter();
 
-	const lbg_upload =
-		(typeof window !== "undefined" && localStorage.getItem("lbg_upload")) || "";
-
 	useEffect(() => {
 		setBackground((prev) => ({
 			...prev,
@@ -113,14 +109,20 @@ const ProfileForm = ({ user, account }: any) => {
 
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
 		setLoading((prev) => ({ ...prev, button: true }));
+		const lav_upload =
+			(typeof window !== "undefined" && localStorage.getItem("lav_upload")) || "";
 
 		const accountImage = currentAccount?.image;
 		const currentAvatar = avatar.url || data.avatar!;
 
 		const hasAvatarChanged =
 			(accountImage || currentAvatar) &&
+			lav_upload !== data.avatar &&
 			isBase64Image(currentAvatar, accountImage);
 
+
+
+			
 		const lbg_upload =
 			(typeof window !== "undefined" && localStorage.getItem("lbg_upload")) || "";
 
@@ -138,26 +140,30 @@ const ProfileForm = ({ user, account }: any) => {
 			try {
 				imgRes = await startUpload(avatar.file);
 				if (imgRes && imgRes[0].url) {
+					localStorage.setItem("lav_upload", data.avatar!);
 					setAvatar((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
 					data.avatar = imgRes[0].url;
 				}
 			} catch (error: any) {
 				console.log("upload avatar", error);
 			}
+		} else {
+			data.avatar = currentAccount.image;
 		}
+
+
 		if (hasBgImageChanged) {
 			try {
 				imgRes = await startUpload(background.imgFile);
 				if (imgRes && imgRes[0].url) {
+					localStorage.setItem("lbg_upload", data.bg_image!);
 					setBackground((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
 					data.bg_image = imgRes[0].url;
-					localStorage.setItem("lbg_upload", background.url);
 				}
 			} catch (error: any) {
 				console.log("upload banner", error);
 			}
-		}
-		else{
+		} else {
 			data.bg_image = accountBackgroundImage;
 		}
 
@@ -172,8 +178,6 @@ const ProfileForm = ({ user, account }: any) => {
 				variant: "destructive",
 			});
 		} else {
-			console.log("data", data.bg_image);
-			console.log("url", background.url);
 			await UpdateUserAccount({
 				userId: currentUser?.id,
 				userName: data.userName?.toString(),
