@@ -43,7 +43,12 @@ type Background = {
 
 const ProfileForm = ({ user, account }: any) => {
 	const currentUser = JSON.parse(user);
+
 	const currentAccount: UserAccount = JSON.parse(account);
+
+	const target_username =
+		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
+		"";
 
 	const [loading, setLoading] = useState({
 		form: true,
@@ -63,7 +68,10 @@ const ProfileForm = ({ user, account }: any) => {
 			(currentAccount?.background?.type == "image" &&
 				currentAccount?.background?.value.toString()) ||
 			"",
-		colorValue: "",
+		colorValue:
+			currentAccount?.background.type == "color"
+				? currentAccount?.background?.value
+				: "#f0f0f0",
 	});
 
 	const { startUpload } = useUploadThing("imageUploader", {
@@ -79,6 +87,9 @@ const ProfileForm = ({ user, account }: any) => {
 	const path = usePathname();
 	const { push } = useRouter();
 
+	const lbg_upload =
+		(typeof window !== "undefined" && localStorage.getItem("lbg_upload")) || "";
+
 	useEffect(() => {
 		setBackground((prev) => ({
 			...prev,
@@ -88,10 +99,6 @@ const ProfileForm = ({ user, account }: any) => {
 			setLoading((prev) => ({ ...prev, form: false }));
 		}
 	}, []);
-
-	const target_username =
-		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
-		"";
 
 	const form = useForm<z.infer<typeof AccountValidation>>({
 		resolver: zodResolver(AccountValidation),
@@ -106,17 +113,27 @@ const ProfileForm = ({ user, account }: any) => {
 
 	async function onSubmit(data: z.infer<typeof AccountValidation>) {
 		setLoading((prev) => ({ ...prev, button: true }));
+
+		const accountImage = currentAccount?.image;
+		const currentAvatar = avatar.url || data.avatar!;
+
 		const hasAvatarChanged =
-			currentAccount?.image &&
-			isBase64Image(avatar.url || data.avatar!, currentAccount.image);
+			(accountImage || currentAvatar) &&
+			isBase64Image(currentAvatar, accountImage);
+
+		const lbg_upload =
+			(typeof window !== "undefined" && localStorage.getItem("lbg_upload")) || "";
+
+		const accountBackgroundImage = currentAccount?.background.value;
+		const currentBackgroundImage = background.url || data.bg_image!;
+
 		const hasBgImageChanged =
-			currentAccount?.background.value &&
-			isBase64Image(
-				background.url || data.bg_image!,
-				currentAccount.background.value
-			);
+			(accountBackgroundImage || currentBackgroundImage) &&
+			isBase64Image(currentBackgroundImage, accountBackgroundImage) &&
+			lbg_upload !== currentBackgroundImage;
 
 		let imgRes: any;
+
 		if (hasAvatarChanged) {
 			try {
 				imgRes = await startUpload(avatar.file);
@@ -134,24 +151,29 @@ const ProfileForm = ({ user, account }: any) => {
 				if (imgRes && imgRes[0].url) {
 					setBackground((prev) => ({ ...prev, url: imgRes[0].url.toString() }));
 					data.bg_image = imgRes[0].url;
+					localStorage.setItem("lbg_upload", background.url);
 				}
 			} catch (error: any) {
 				console.log("upload banner", error);
 			}
 		}
+		else{
+			data.bg_image = accountBackgroundImage;
+		}
 
 		if (imgRes) {
 			setLoading((prev) => ({ ...prev, button: false }));
 		}
-		console.log(data.bg_image);
 
-		if (background.type === "image" && data.bg_image == undefined) {
+		if (background.type === "image" && background.url == "") {
 			setLoading((prev) => ({ ...prev, button: false }));
 			toast({
 				title: "Background image can't be empty",
 				variant: "destructive",
 			});
 		} else {
+			console.log("data", data.bg_image);
+			console.log("url", background.url);
 			await UpdateUserAccount({
 				userId: currentUser?.id,
 				userName: data.userName?.toString(),
@@ -159,9 +181,7 @@ const ProfileForm = ({ user, account }: any) => {
 				bgType: background.type || "color",
 				avatar: avatar.url || data.avatar || "",
 				bgValue:
-					background.type === "image"
-						? data.bg_image || background.url
-						: background.colorValue || "",
+					background.type === "image" ? data.bg_image! : background.colorValue || "",
 				location: data.location?.toString(),
 				bio: data.bio?.toString(),
 				path: path,
@@ -173,17 +193,16 @@ const ProfileForm = ({ user, account }: any) => {
 						message: res?.message,
 					});
 				} else {
-					localStorage.removeItem(target_username);
 					toast({
 						title: "Successfully saved new changes",
 						variant: "default",
 						icon: true,
 					});
-
+					target_username && localStorage.removeItem("target_username");
 					/*
-						verify if account state complete then we don't use push 
+						verify if account state complete then we don't use push
 					*/
-					push("/account/links");
+					// push("/account/links");
 				}
 			});
 		}

@@ -5,11 +5,10 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-
 export function isBase64Image(imageData: string, prevImg: string) {
 	// Check if imageData has changed
 
-	if (imageData == prevImg) {
+	if (imageData == prevImg && prevImg !== undefined) {
 		console.log("Image data has not changed.");
 		return false; // Image data has not changed
 	}

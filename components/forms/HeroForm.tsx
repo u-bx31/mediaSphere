@@ -10,6 +10,8 @@ const HeroForm = ({ user, account }: any) => {
 
 	const [btnLoading, setBtnLoading] = useState(false);
 
+	const target_username = (typeof window !== "undefined" && localStorage.getItem("target_username")) ||
+	"";
 	const { push } = useRouter();
 
 	const handleSubmit = (e: React.SyntheticEvent) => {
@@ -18,49 +20,51 @@ const HeroForm = ({ user, account }: any) => {
 
 		const formData = new FormData(e.target as HTMLFormElement);
 		const userName = formData.get("userName") as string;
+		const isUserNameValid = userName.length >= 2 && userName.length <= 30;
 
-		if (!account) {
+		// if (!account) {
+		// 	setBtnLoading(false);
+		// 	toast({
+		// 		title: "Validation error",
+		// 		description: "Something Wrong,try again later",
+		// 		variant: "destructive",
+		// 	});
+		// }
+
+		if (!isUserNameValid) {
 			setBtnLoading(false);
 			toast({
 				title: "Validation error",
-				description: "Something Wrong,try again later",
+				description: "The username must be at least between 6  and 20 characters",
 				variant: "destructive",
 			});
 		}
+		isUserNameValid && window.localStorage.setItem("target_username", userName);
 
 		if (currentUser?.id) {
-			if (account) {
+			if (account !== "null") {
 				const userAccount = JSON.parse(account);
-				if (userAccount.state === "completed") {
+				if (userAccount?.state === "completed") {
 					push("/account");
 				} else {
-					push(`/account/${userAccount.state}`);
+					push(`/account/${userAccount?.state}`);
 				}
 			} else {
-				push("/account/info");
+				isUserNameValid && push("/account/info");
 			}
 		} else {
-			if (userName.length < 2 || userName.length > 20) {
-				setBtnLoading(false);
-				toast({
-					title: "Validation error",
-					description: "The username must be at least between 6  and 20 characters",
-					variant: "destructive",
-				});
-			} else {
-				window.localStorage.setItem("target_username", userName);
-				push("/sign-up");
-			}
+			isUserNameValid && push("/sign-up");
 		}
 	};
 
 	return (
 		<form onSubmit={handleSubmit} className="justify-center  gap-x-1 sm:flex">
-			<div className="bg-white flex flex-row items-center rounded-md">
+			<div className="bg-white flex flex-row items-center rounded-md ">
 				<p className="px-2 text-base font-bold">media-sphere/</p>
 				<input
 					type="text"
 					id="userName"
+					defaultValue={currentUser?.id && target_username || ''}
 					name="userName"
 					placeholder="Username"
 					className="w-full pl-1 pr-3 py-4 text-gray-400 bg-white border-none focus:border-gray-300 duration-150 outline-none rounded-lg sm:max-w-sm sm:w-auto"
