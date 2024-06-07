@@ -47,9 +47,8 @@ export const AccountLinksValidation = z.object({
 	custom: z.array(
 		z.object({
 			icon: z.string().optional(),
-			title: z.string().optional(),
+			title: z.string().min(3).optional(),
 			url: z.string().url().optional(),
-			description: z.string().optional(),
 		})
 	),
 });

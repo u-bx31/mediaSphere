@@ -10,8 +10,9 @@ const HeroForm = ({ user, account }: any) => {
 
 	const [btnLoading, setBtnLoading] = useState(false);
 
-	const target_username = (typeof window !== "undefined" && localStorage.getItem("target_username")) ||
-	"";
+	const target_username =
+		(typeof window !== "undefined" && localStorage.getItem("target_username")) ||
+		"";
 	const { push } = useRouter();
 
 	const handleSubmit = (e: React.SyntheticEvent) => {
@@ -39,21 +40,25 @@ const HeroForm = ({ user, account }: any) => {
 				variant: "destructive",
 			});
 		}
-		isUserNameValid && window.localStorage.setItem("target_username", userName);
+		
 
-		if (currentUser?.id) {
-			if (account !== "null") {
-				const userAccount = JSON.parse(account);
-				if (userAccount?.state === "completed") {
-					push("/account");
+		if (isUserNameValid) {
+			if (currentUser?.id) {
+				if (account !== "null") {
+					const userAccount = JSON.parse(account);
+					if (userAccount?.state === "completed") {
+						push("/account");
+					} else {
+						push(`/account/${userAccount?.state}`);
+					}
 				} else {
-					push(`/account/${userAccount?.state}`);
+					window.localStorage.setItem("target_username", userName);
+					push("/account/info");
 				}
 			} else {
-				isUserNameValid && push("/account/info");
+				window.localStorage.setItem("target_username", userName);
+				push("/sign-up");
 			}
-		} else {
-			isUserNameValid && push("/sign-up");
 		}
 	};
 
@@ -64,7 +69,7 @@ const HeroForm = ({ user, account }: any) => {
 				<input
 					type="text"
 					id="userName"
-					defaultValue={currentUser?.id && target_username || ''}
+					defaultValue={(currentUser?.id && target_username) || ""}
 					name="userName"
 					placeholder="Username"
 					className="w-full pl-1 pr-3 py-4 text-gray-400 bg-white border-none focus:border-gray-300 duration-150 outline-none rounded-lg sm:max-w-sm sm:w-auto"

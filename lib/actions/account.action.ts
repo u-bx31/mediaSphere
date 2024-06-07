@@ -6,11 +6,6 @@ import Account from "../models/account.model";
 import { revalidatePath } from "next/cache";
 import { UserAccount } from "@/constants/types";
 
-interface AccountUserProps {
-	userId: string;
-	userName: string;
-	path?: string;
-}
 
 export async function findUserAccount(userId: string) {
 	ConnectionToDb();
@@ -23,7 +18,7 @@ export async function findUserAccount(userId: string) {
 	try {
 		const data = await Account.findOne({
 			createdBy: currentUser?._id,
-		}).then((res) => {
+		}).then((res: UserAccount) => {
 			return res;
 		});
 		return { data };
@@ -31,35 +26,6 @@ export async function findUserAccount(userId: string) {
 		throw new Error(`Failed to fetch user :${error}`);
 	}
 }
-
-// export async function CreateUserAccount({
-// 	userId,
-// 	userName,
-// 	path,
-// }: AccountUserProps) {
-// 	ConnectionToDb();
-// 	const user = await User.findOne({ id: userId });
-// 	const userAccount = await Account.findOne({ userName: userName });
-// 	if (userAccount) {
-// 		return {
-// 			message: "This userName already taken",
-// 		};
-// 	}
-// 	try {
-// 		if (user) {
-// 			await Account.create({
-// 				userName: userName?.toLowerCase(),
-// 				createdBy: user?._id,
-// 			});
-// 		} else {
-// 			return {
-// 				message: "This user not found",
-// 			};
-// 		}
-// 	} catch (error: any) {
-// 		throw new Error(`Failed to create/update user :${error.message}`);
-// 	}
-// }
 
 export async function UpdateUserAccount({
 	userId,

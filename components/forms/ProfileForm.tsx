@@ -59,6 +59,8 @@ const ProfileForm = ({ user, account }: any) => {
 		url: "",
 	});
 
+	const completedAccount = currentAccount.state === "completed";
+
 	const [background, setBackground] = useState<Background>({
 		type: currentAccount?.background.type || "color",
 		value: currentAccount?.background?.value || "",
@@ -120,9 +122,6 @@ const ProfileForm = ({ user, account }: any) => {
 			lav_upload !== data.avatar &&
 			isBase64Image(currentAvatar, accountImage);
 
-
-
-			
 		const lbg_upload =
 			(typeof window !== "undefined" && localStorage.getItem("lbg_upload")) || "";
 
@@ -150,7 +149,6 @@ const ProfileForm = ({ user, account }: any) => {
 		} else {
 			data.avatar = currentAccount.image;
 		}
-
 
 		if (hasBgImageChanged) {
 			try {
@@ -203,10 +201,9 @@ const ProfileForm = ({ user, account }: any) => {
 						icon: true,
 					});
 					target_username && localStorage.removeItem("target_username");
-					/*
-						verify if account state complete then we don't use push
-					*/
-					// push("/account/links");
+					if (completedAccount) {
+						push("/account/links");
+					}
 				}
 			});
 		}

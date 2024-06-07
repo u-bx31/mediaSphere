@@ -79,10 +79,9 @@ const LinksForm = ({ account, user }: any) => {
 				icon: true,
 			});
 			setLoading(false);
-			/*
-				verify if account state complete then we don't use push 
-			*/
-			push("/account");
+			if (currentAccount.state != "completed") {
+				push("/account");
+			}
 		});
 	}
 	return (
