@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Image from "next/image";
 import { useEffect } from "react";
 
@@ -10,8 +10,8 @@ export default function Phone({
 	email2,
 	img,
 	setImg,
-}:any) {
-	
+	currentAccount,
+}: any) {
 	return (
 		<div className="items-start min-h-[90dvh] max-h-full lg:flex w-[350px] justify-center hidden pl-2 xl:pl-5">
 			<svg
@@ -30,39 +30,27 @@ export default function Phone({
 					stroke="#737373"
 					d="M12 55.5C12 30.923 31.923 11 56.5 11h24C86.851 11 92 16.149 92 22.5c0 8.008 6.492 14.5 14.5 14.5h95c8.008 0 14.5-6.492 14.5-14.5 0-6.351 5.149-11.5 11.5-11.5h24c24.577 0 44.5 19.923 44.5 44.5v521c0 24.577-19.923 44.5-44.5 44.5h-195C31.923 621 12 601.077 12 576.5v-521Z"
 				/>
-
-				<foreignObject x="0" y="70" width={308} height="100%">
-					<div
-						className="mx-auto mb-4 w-[120px] h-[120px]">
-						{img ? (
-							<img
-								alt="phone_avatar"
-								className="rounded-full w-full h-full border-violet-1 border-4"
-								src={img}
-							/>
-						) : (
-							<div className="bg-grey-2 rounded-full w-full h-full animate-pulse"></div>
-						)}
-					</div>
-					<div
-						className="text-center mx-auto overflow-hidden">
-						{firstName !== "" || lastName !== "" ? (
-							<div className="font-medium text-2xl">{firstName + " " + lastName}</div>
-						) : (
-							<div className=" bg-grey-2 w-3/4 m-auto h-3 rounded-full mb-4 animate-pulse"></div>
-						)}
-						{email2 ? (
-							<div>{email2}</div>
-						) : (
-							<div className="bg-grey-2 w-1/2 m-auto mx-auto h-3 rounded-full animate-pulse"></div>
-						)}
-					</div>
+				<foreignObject x="12" y="37" width={283} height="100%">
+					<div className="bg-gray-400 w-full h-[120px] rounded-t-xl"> </div>
 				</foreignObject>
-
-				<foreignObject x="35" y="290" width="240" height="100%">
-					<div
-						className="overflow-auto border-2h-[50%]">
-						
+				<foreignObject x="0" y="100" width={308} height="100%">
+					<div className="mx-auto mb-4 w-[120px] h-[120px] border-4 border-white rounded-full shadow-md">
+						{
+							<Image
+								src={
+									currentAccount?.image
+										? currentAccount?.image
+										: "/assets/svgs/profile.svg"
+								}
+								alt="avatar"
+								width={1980}
+								height={900}
+								priority={currentAccount?.image != ""}
+								className={`${
+									currentAccount?.image ? "rounded-full !w-full !h-full" : "!w-12 !h-12"
+								} object-cover `}
+							/>
+						}
 					</div>
 				</foreignObject>
 			</svg>

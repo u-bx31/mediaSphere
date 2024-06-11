@@ -28,7 +28,7 @@ const AccountComponent = ({ userAccount }: any) => {
 			<div className="flex flex-col w-full">
 				<AccountCard currentAccount={currentAccount} loading={loading} />
 			</div>
-			<Phone />
+			<Phone currentAccount={currentAccount} />
 		</div>
 	);
 };
