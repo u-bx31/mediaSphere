@@ -9,7 +9,7 @@ const Page = async () => {
 	const { data: account } = await findUserAccount(user?.id || "");
 
 	return (
-		<div className="container flex flex-col justify-center items-center">
+		<div className="md:container flex flex-col justify-center items-center w-full px-4 md:px-auto">
 			<AccountComponent userAccount={JSON.stringify(account)}  />
 		</div>
 	);
