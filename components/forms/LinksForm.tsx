@@ -94,7 +94,7 @@ const LinksForm = ({ account, user }: any) => {
 							<button
 								className="flex flex-row gap-1 items-center p-2 bg-gray-100 rounded-md hover:bg-slate-200"
 								onClick={() => handleAddingLinks(vals)}>
-								<div className="">{vals.icon}</div>
+								<div className="w-5 h-5">{vals.icon}</div>
 								<p>{vals.label.slice(0, 1).toUpperCase() + vals.label.slice(1)}</p>
 								<div className="">
 									<Plus className="w-5 h-5 stroke-black" />

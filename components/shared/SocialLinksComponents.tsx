@@ -61,7 +61,7 @@ const SocialLinksComponents = ({
 						} ${fadeAnimation.enter === index && "fade-enter"} `}
 						key={vl?.value}>
 						<GripHorizontalIcon className="w-5 h-5 stroke-gray-400 handle cursor-pointer" />
-						<div className="">{vl?.icon}</div>
+						<div className="w-6 h-6">{vl?.icon}</div>
 						<FormField
 							control={form.control}
 							name={`social.${index}.${vl?.value}`}

@@ -23,9 +23,9 @@ const AccountCard = ({
 			)}
 			<div className="absolute h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] z-10"></div>
 
-			<div className="w-full flex flex-col sm:flex-row gap-5 my-2 sm:my-5 items-center justify-center px-1 sm:px-3 z-20">
-				<div className="flex flex-col sm:flex-row gap-5 items-center justify-center">
-					<div className="w-24 h-24 lg:w-32 lg:h-32 xl:w-36 xl:h-36 rounded-full flex items-center justify-center bg-gray-400 border-4 border-white shadow-lg">
+			<div className="w-full flex flex-col sm:flex-row gap-4 lg:gap-10 my-2 sm:my-5 items-center justify-center px-1 sm:px-3 z-20">
+				<div className="flex flex-col sm:flex-row gap-4 lg:gap-10  items-center justify-center">
+					<div className="w-24 h-24 lg:w-[117px] lg:h-28 xl:w-36 xl:h-36 rounded-full flex items-center justify-center bg-gray-400 border-4 border-white shadow-lg">
 						<Image
 							src={
 								currentAccount?.image

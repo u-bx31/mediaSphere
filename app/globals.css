@@ -56,7 +56,15 @@
 			transform: scale(0.9);
 		}
 	}
+	.scrollbar-hide::-webkit-scrollbar {
+		display: none;
+	}
 
+	/* For IE, Edge and Firefox */
+	.scrollbar-hide {
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
 	.fade-enter {
 		animation: fadeIn 0.3s forwards;
 	}
