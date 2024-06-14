@@ -127,6 +127,52 @@
 	.navbar-class {
 		@apply container h-[60px] md:h-full w-full bg-white bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-30  !px-2 md:!px-5 lg:sticky top-1  rounded-full z-50 shadow-sm mt-2;
 	}
+
+	/*-- default theme --*/
+	
+	/*|--> default theme background section */
+	.default-theme.background {
+		@apply bg-white;
+	}
+
+	/*|--> default theme avatar section */
+	.default-theme.avatar {
+		@apply border-4 border-white rounded-full shadow-md;
+	}
+
+	/*|--> default theme info section */
+	.default-theme.user-fullName {
+		@apply text-lg font-black;
+	}
+	.default-theme.info-div {
+		@apply flex flex-col items-start;
+	}
+	.default-theme.info-icon {
+		@apply w-4 h-4 stroke-[2px];
+	}
+	.default-theme.info-text {
+		@apply text-base;
+	}
+	.default-theme.info-description {
+		@apply mt-2 text-base font-semibold text-center w-[220px];
+	}
+	.default-theme.social-links svg {
+		@apply stroke-black
+	}
+
+	/*|--> default theme links card section */
+	.default-theme.links-card {
+		@apply flex flex-row gap-2 bg-white rounded-lg  w-full h-16 shadow-[0px_0px_20px_0px_#e2e8f0];
+	}
+	.default-theme.links-card-image {
+		@apply w-20 h-16 bg-gray-400 rounded-lg;
+	}
+	.default-theme.links-card-icon {
+		@apply w-4 h-4 stroke-black;
+	}
+	.default-theme.links-card-title {
+		@apply text-base font-bold truncate w-[120px];
+	}
 }
 
 .ham {

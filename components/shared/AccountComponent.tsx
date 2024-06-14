@@ -4,7 +4,7 @@ import { Loader2Icon, MapPin, UserCircle2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "../ui/button";
 import AccountCard from "../cards/AccountCard";
 import Phone from "./PhoneSvg";
@@ -16,11 +16,12 @@ const AccountComponent = ({ userAccount }: any) => {
 
 	const { push } = useRouter();
 
+
 	useEffect(() => {
 		if (!currentAccount) {
 			push("/account/info");
 		}
-		setLoading(false);
+		setLoading( false);
 	}, []);
 
 	return (
@@ -28,7 +29,7 @@ const AccountComponent = ({ userAccount }: any) => {
 			<div className="flex flex-col w-full">
 				<AccountCard currentAccount={currentAccount} loading={loading} />
 			</div>
-			<Phone currentAccount={currentAccount} />
+			<Phone currentAccount={currentAccount} loading={loading} />
 		</div>
 	);
 };

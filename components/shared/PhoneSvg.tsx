@@ -1,6 +1,6 @@
 "use client";
 import { SocialLink, UserAccount } from "@/constants/types";
-import { LinkIcon, MapPin } from "lucide-react";
+import { LinkIcon, Loader2Icon, MapPin } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import SeeMore from "./tools/SeeMore";
@@ -11,9 +11,12 @@ import Link from "next/link";
 
 export default function Phone({
 	currentAccount,
+	loading,
 }: {
 	currentAccount: UserAccount;
+	loading: boolean;
 }) {
+	const theme = "default-theme";
 	const accountLinks: (SocialLink | undefined)[] =
 		currentAccount?.links?.social! &&
 		Object.keys(currentAccount?.links?.social)?.map((k) =>
@@ -22,11 +25,41 @@ export default function Phone({
 
 	return (
 		<div className="relative items-start min-h-[90dvh] max-h-full lg:flex w-1/2 justify-center hidden pl-2 xl:pl-5">
-			<div className="absolute z-10 bg-white rounded-[50px] w-[300px] border-[10px] border-black overflow-hidden">
-				<div className="flex flex-col gap-3 overflow-auto w-full h-[600px] scrollbar-hide">
+			<div className="absolute z-10 rounded-[50px] w-[300px] border-[10px] border-black overflow-hidden">
+				{loading && (
+					<div className="bg-white/70 backdrop-blur-sm absolute h-full w-full flex flex-col gap-3 items-center justify-center z-40 transition-all ease-linear">
+						<Loader2Icon className="w-8 h-8 animate-spin" />
+						<h1>Loading your data . . .</h1>
+					</div>
+				)}
+				<div
+					className={`${theme} background flex flex-col gap-3 overflow-auto w-full h-[600px] scrollbar-hide`}>
 					<div className="relative !h-52">
-						<div className="bg-gray-400 w-full h-[120px] rounded-t-xl"> </div>
-						<div className=" mx-auto w-[120px] h-[120px] border-4 border-white rounded-full shadow-md -translate-y-9  md:-translate-y-12  ">
+						{theme == "default-theme" && (
+							<div
+								className={`${
+									currentAccount.background.type == "color" ? "bg-gray-400" : ""
+								}  w-full h-[120px] rounded-t-xl`}>
+								{currentAccount.background.type == "image" && (
+									<Image
+										src={
+											currentAccount?.background.value
+												? currentAccount?.background.value
+												: "/assets/svgs/profile.svg"
+										}
+										alt="avatar"
+										width={1980}
+										height={900}
+										priority={currentAccount?.background.value != ""}
+										className={`${
+											currentAccount?.background.value ? "!w-full !h-full" : "!w-12 !h-12"
+										} object-cover `}
+									/>
+								)}
+							</div>
+						)}
+						<div
+							className={`${theme} avatar mx-auto w-[120px] h-[120px] -translate-y-9  md:-translate-y-12  `}>
 							{
 								<Image
 									src={
@@ -46,21 +79,25 @@ export default function Phone({
 						</div>
 					</div>
 					<div className="flex flex-col items-center justify-center ">
-						<h1 className="text-lg font-black">
+						<h1 className={`${theme} user-fullName`}>
 							{currentAccount?.displayName || "FullName"}
 						</h1>
-						<div className="flex flex-col items-start">
+						<div className={`${theme} info-div`}>
 							<div className="flex items-center flex-row gap-1">
-								<MapPin className="w-4 h-4 stroke-[2px]" />
-								<p className="text-base">{currentAccount?.location || "-"}</p>
+								<MapPin className={`${theme} info-icon`} />
+								<p className={`${theme} info-text`}>
+									{currentAccount?.location || "-"}
+								</p>
 							</div>
 							<div className="flex items-center flex-row gap-1">
-								<LinkIcon className="w-4 h-4 stroke-[2px]" />
-								<p className="text-base">{currentAccount?.userName || "-"}</p>
+								<LinkIcon className={`${theme} info-icon`} />
+								<p className={`${theme} info-text`}>
+									{currentAccount?.userName || "-"}
+								</p>
 							</div>
 						</div>
 						<SeeMore
-							className="mt-2 text-base font-semibold text-center w-[220px]"
+							className={`${theme} info-description`}
 							text={currentAccount.bio}
 							maxLength={200}
 						/>
@@ -70,7 +107,9 @@ export default function Phone({
 						{accountLinks.map((vl) => {
 							const { value, icon }: { value: string; icon: JSX.Element } = vl!;
 							return (
-								<Link href={currentAccount.links?.social[value]} className="w-7 h-7">
+								<Link
+									href={currentAccount.links?.social[value]}
+									className={`${theme} social-links w-7 h-7`}>
 									{icon}
 								</Link>
 							);
@@ -83,6 +122,7 @@ export default function Phone({
 								<LinkCard
 									title={link.title || "Title"}
 									link={link.url || ""}
+									theme={"default-theme"}
 									image={link.icon || ""}
 								/>
 							);
