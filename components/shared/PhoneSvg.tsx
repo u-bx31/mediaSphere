@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import SeeMore from "./tools/SeeMore";
 import LinkCard from "../cards/LinkCard";
 import { mediaOptions } from "@/constants";
-import { ItemInterface } from "react-sortablejs";
 import Link from "next/link";
+import { VerifyLink } from "./tools/VerLink";
 
 export default function Phone({
 	currentAccount,
@@ -108,7 +108,7 @@ export default function Phone({
 							const { value, icon }: { value: string; icon: JSX.Element } = vl!;
 							return (
 								<Link
-									href={currentAccount.links?.social[value]}
+									href={VerifyLink(value,currentAccount.links?.social[value])}
 									className={`${theme} social-links w-7 h-7`}>
 									{icon}
 								</Link>
