@@ -31,35 +31,40 @@ const HeroForm = ({ user, account }: any) => {
 		// 		variant: "destructive",
 		// 	});
 		// }
-
-		if (!isUserNameValid) {
-			setBtnLoading(false);
-			toast({
-				title: "Validation error",
-				description: "The username must be at least between 6  and 20 characters",
-				variant: "destructive",
-			});
-		}
+		toast({
+			title: "Validation error",
+			description: "The username must be at least between 6  and 20 characters",
+			variant: "destructive",
+			position :'topCenter'
+		});
+		// if (!isUserNameValid) {
+		// 	setBtnLoading(false);
+		// 	toast({
+		// 		title: "Validation error",
+		// 		description: "The username must be at least between 6  and 20 characters",
+		// 		variant: "destructive",
+		// 	});
+		// }
 		
 
-		if (isUserNameValid) {
-			if (currentUser?.id) {
-				if (account !== "null") {
-					const userAccount = JSON.parse(account);
-					if (userAccount?.state === "completed") {
-						push("/account");
-					} else {
-						push(`/account/${userAccount?.state}`);
-					}
-				} else {
-					window.localStorage.setItem("target_username", userName);
-					push("/account/info");
-				}
-			} else {
-				window.localStorage.setItem("target_username", userName);
-				push("/sign-up");
-			}
-		}
+		// if (isUserNameValid) {
+		// 	if (currentUser?.id) {
+		// 		if (account !== "null") {
+		// 			const userAccount = JSON.parse(account);
+		// 			if (userAccount?.state === "completed") {
+		// 				push("/account");
+		// 			} else {
+		// 				push(`/account/${userAccount?.state}`);
+		// 			}
+		// 		} else {
+		// 			window.localStorage.setItem("target_username", userName);
+		// 			push("/account/info");
+		// 		}
+		// 	} else {
+		// 		window.localStorage.setItem("target_username", userName);
+		// 		push("/sign-up");
+		// 	}
+		// }
 	};
 
 	return (

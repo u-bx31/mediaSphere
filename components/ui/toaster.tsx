@@ -21,7 +21,9 @@ export function Toaster() {
 					<Toast key={id} {...props}>
 						<div className="grid gap-1">
 							<div className="flex flex-row gap-2 ">
-								{icon && <CheckCircle className="w-6 h-6 stroke-green-400  rounded-full" />}
+								{icon && (
+									<CheckCircle className="w-6 h-6 stroke-green-400  rounded-full" />
+								)}
 								{title && <ToastTitle>{title}</ToastTitle>}
 							</div>
 							{description && <ToastDescription>{description}</ToastDescription>}
@@ -31,7 +33,7 @@ export function Toaster() {
 					</Toast>
 				);
 			})}
-			<ToastViewport />
+			<ToastViewport position={toasts[0]?.position} />
 		</ToastProvider>
 	);
 }
