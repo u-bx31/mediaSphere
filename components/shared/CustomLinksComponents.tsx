@@ -55,7 +55,7 @@ const CustomLinksComponents = ({
 		append({
 			icon: "",
 			title: "",
-			url: "http://localhost:3000/account/links",
+			url: "",
 			description: "",
 		});
 	};
