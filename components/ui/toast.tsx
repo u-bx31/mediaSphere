@@ -10,18 +10,21 @@ import { cn } from "@/lib/utils";
 const ToastProvider = ToastPrimitives.Provider;
 //TODO: work on position
 const toastPs = cva(
-	"fixed z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:right-0 sm:flex-col",
+	"fixed z-[100] flex max-h-screen w-full flex-col-reverse p-4 ",
 	{
 		variants: {
 			position: {
-				top: "top-[calc(var(--navBar-height)+20px)]",
-				topCenter:
-					"top-[calc(var(--navBar-height)+20px)] items-center ",
-				bottom: "top-0 sm:bottom-0",
+				topCenter: "top-[calc(var(--navBar-height)+20px)] items-center ",
+				topLeft: "top-[calc(var(--navBar-height)+20px)] items-start ",
+				topRight: "top-[calc(var(--navBar-height)+20px)] items-end ",
+				bottomCenter:
+					"top-[calc(var(--navBar-height)+20px)] sm:bottom-0 items-center",
+				bottomLeft: "top-[calc(var(--navBar-height)+20px)] sm:bottom-0 items-start",
+				bottomRight: "top-[calc(var(--navBar-height)+20px)] sm:bottom-0 items-end",
 			},
 		},
 		defaultVariants: {
-			position: "bottom",
+			position: "bottomRight",
 		},
 	}
 );
@@ -60,15 +63,22 @@ const toastAnimation = cva(
 	{
 		variants: {
 			position: {
-				top: "data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
 				topCenter:
+					"data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full",
+				topRight:
+					"data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full",
+				topLeft:
+					"data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-left-full",
+				bottomCenter:
 					"data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
-				bottom:
-					"data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+				bottomRight:
+					"data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-right-full",
+				bottomLeft:
+					"data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-left-full",
 			},
 		},
 		defaultVariants: {
-			position: "bottom",
+			position: "bottomRight",
 		},
 	}
 );
