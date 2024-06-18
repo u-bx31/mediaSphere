@@ -23,48 +23,41 @@ const HeroForm = ({ user, account }: any) => {
 		const userName = formData.get("userName") as string;
 		const isUserNameValid = userName.length >= 2 && userName.length <= 30;
 
-		// if (!account) {
-		// 	setBtnLoading(false);
-		// 	toast({
-		// 		title: "Validation error",
-		// 		description: "Something Wrong,try again later",
-		// 		variant: "destructive",
-		// 	});
-		// }
-		toast({
-			title: "Validation error",
-			description: "The username must be at least between 6  and 20 characters",
-			variant: "destructive",
-			position :'topCenter'
-		});
-		// if (!isUserNameValid) {
-		// 	setBtnLoading(false);
-		// 	toast({
-		// 		title: "Validation error",
-		// 		description: "The username must be at least between 6  and 20 characters",
-		// 		variant: "destructive",
-		// 	});
-		// }
-		
+		if (!account) {
+			setBtnLoading(false);
+			toast({
+				title: "Validation error",
+				description: "Something Wrong,try again later",
+				variant: "destructive",
+			});
+		}
+		if (!isUserNameValid) {
+			setBtnLoading(false);
+			toast({
+				title: "Validation error",
+				description: "The username must be at least between 6  and 20 characters",
+				variant: "destructive",
+			});
+		}
 
-		// if (isUserNameValid) {
-		// 	if (currentUser?.id) {
-		// 		if (account !== "null") {
-		// 			const userAccount = JSON.parse(account);
-		// 			if (userAccount?.state === "completed") {
-		// 				push("/account");
-		// 			} else {
-		// 				push(`/account/${userAccount?.state}`);
-		// 			}
-		// 		} else {
-		// 			window.localStorage.setItem("target_username", userName);
-		// 			push("/account/info");
-		// 		}
-		// 	} else {
-		// 		window.localStorage.setItem("target_username", userName);
-		// 		push("/sign-up");
-		// 	}
-		// }
+		if (isUserNameValid) {
+			if (currentUser?.id) {
+				if (account !== "null") {
+					const userAccount = JSON.parse(account);
+					if (userAccount?.state === "completed") {
+						push("/account");
+					} else {
+						push(`/account/${userAccount?.state}`);
+					}
+				} else {
+					window.localStorage.setItem("target_username", userName);
+					push("/account/info");
+				}
+			} else {
+				window.localStorage.setItem("target_username", userName);
+				push("/sign-up");
+			}
+		}
 	};
 
 	return (

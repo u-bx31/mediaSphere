@@ -61,6 +61,8 @@ const ProfileForm = ({ user, account }: any) => {
 
 	const completedAccount = currentAccount.state === "completed";
 
+	console.log(completedAccount);
+
 	const [background, setBackground] = useState<Background>({
 		type: currentAccount?.background.type || "color",
 		value: currentAccount?.background?.value || "",
@@ -198,6 +200,7 @@ const ProfileForm = ({ user, account }: any) => {
 					toast({
 						title: "Successfully saved new changes",
 						variant: "default",
+						position:'topCenter',
 						icon: true,
 					});
 					target_username && localStorage.removeItem("target_username");

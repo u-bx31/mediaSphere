@@ -8,7 +8,6 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const ToastProvider = ToastPrimitives.Provider;
-//TODO: work on position
 const toastPs = cva(
 	"fixed z-[100] flex max-h-screen w-full flex-col-reverse p-4 ",
 	{
@@ -57,7 +56,6 @@ const toastVariants = cva(
 		},
 	}
 );
-//TODO: work on animation of each position
 const toastAnimation = cva(
 	"data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 ",
 	{

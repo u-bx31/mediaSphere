@@ -76,6 +76,7 @@ const LinksForm = ({ account, user }: any) => {
 			toast({
 				title: "Successfully saved new changes",
 				variant: "default",
+				position: "topCenter",
 				icon: true,
 			});
 			setLoading(false);
