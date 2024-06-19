@@ -6,7 +6,6 @@ import Account from "../models/account.model";
 import { revalidatePath } from "next/cache";
 import { UserAccount } from "@/constants/types";
 
-
 export async function findUserAccount(userId: string) {
 	ConnectionToDb();
 	const currentUser = await User.findOne({ id: userId });
@@ -24,6 +23,29 @@ export async function findUserAccount(userId: string) {
 		return { data };
 	} catch (error: any) {
 		throw new Error(`Failed to fetch user :${error}`);
+	}
+}
+
+export async function findUserAccountByUserName(userName: string) {
+	ConnectionToDb();
+
+	try {
+		const userAccount = await Account.findOne({ userName: userName }).then(
+			(res: UserAccount) => {
+				return res;
+			}
+		);
+
+		if (!userAccount) {
+			return {
+				message: "This userName not found",
+				statueCode: 404,
+			};
+		} else {
+			return { data: userAccount };
+		}
+	} catch (error: any) {
+		throw new Error(`Failed to fetch userAccount :${error}`);
 	}
 }
 
