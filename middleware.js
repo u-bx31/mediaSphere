@@ -3,11 +3,8 @@ import { authMiddleware } from "@clerk/nextjs";
 export default authMiddleware({
 	publicRoutes: [
 		"/",
-		"/categories",
-		"/products",
-		/^\/products\/\w+$/,
+		/^\/(?!account$)[a-zA-Z0-9_-]+$/, 
 		"/pricing",
-		"/contacts",
 		"/api/webhook/clerk",
 		"/not-found",
 		"/api/uploadthing"
