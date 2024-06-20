@@ -3,19 +3,16 @@ import Event from "../models/event";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 
-export async function findUserAccount({
-	userId,
+export async function AddEventAction({
 	userName,
 	eventType,
 	eventTarget,
 }: {
-	userId: string;
 	userName: string;
 	eventType: string;
 	eventTarget: string;
 }) {
 	ConnectionToDb();
-	const user = await User.findOne({ id: userId });
 
 	const userAccount = await Account.findOne({ userName: userName });
 
