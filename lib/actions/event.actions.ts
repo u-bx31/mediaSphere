@@ -1,6 +1,5 @@
 import Account from "../models/account.model";
 import Event from "../models/event";
-import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
 
 export async function AddEventAction({

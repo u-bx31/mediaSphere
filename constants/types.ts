@@ -18,7 +18,7 @@ export interface UserAccount {
 	};
 	links?: {
 		social: { [key: string]: any };
-		custom: [{ icon: string; title: string; url: string }];
+		custom: { icon: string; title: string; url: string }[];
 	};
 	state: string;
 }

@@ -19,22 +19,33 @@ export async function generateMetadata({
 		title: "",
 	};
 }
+const defaultUser = {
+	userName: "",
+	location: "",
+	background: "",
+	state: "",
+	bio: "",
+	createdBy: "",
+	image: "",
+	displayName: "",
+	links: [],
+};
 
 const UserLink = async ({ params }: { params: { userName: string } }) => {
-	const data = await findUserAccountByUserName(params.userName);
+	const currentAccount = await findUserAccountByUserName(params.userName);
 
-	// if (data.statueCode == 404) {
-	// 	notFound();
-	// } else {
-	// 	await AddEventAction({
-	// 		userName: params.userName,
-	// 		eventType: "view",
-	// 		eventTarget: params.userName,
-	// 	});
-	// }
+	if (currentAccount.statueCode == 404) {
+		notFound();
+	} else {
+		// await AddEventAction({
+		// 	userName: params.userName,
+		// 	eventType: "view",
+		// 	eventTarget: params.userName,
+		// });
+	}
 	return (
 		<div className="w-full h-screen flex items-center justify-center">
-			<UserComponent currentAccount={data?.data!} />
+			<UserComponent account={JSON.stringify(currentAccount?.data)} />
 		</div>
 	);
 };

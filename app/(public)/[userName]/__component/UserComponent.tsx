@@ -8,7 +8,26 @@ import SeeMore from "@/components/shared/tools/SeeMore";
 import { VerifyLink } from "@/components/shared/tools/VerLink";
 import LinkCard from "@/components/cards/LinkCard";
 
-const UserComponent = ({ currentAccount }: { currentAccount: UserAccount }) => {
+const defaultUser = {
+	createdBy: "",
+	userName: "",
+	location: "",
+	displayName: "",
+	image: "",
+	bio: "",
+	background: {
+		type: "",
+		value: "",
+	},
+	links: {
+		social: { link: "" },
+		custom: [{ icon: "", title: "", url: "" }],
+	},
+	state: "",
+};
+
+const UserComponent = ({ account = defaultUser }: { account: any }) => {
+	const currentAccount: UserAccount = JSON.parse(account);
 	const theme = "default-theme";
 
 	const accountLinks: (SocialLink | undefined)[] =
@@ -26,9 +45,9 @@ const UserComponent = ({ currentAccount }: { currentAccount: UserAccount }) => {
 				{theme == "default-theme" && (
 					<div
 						className={`${
-							currentAccount.background.type == "color" ? "bg-gray-400" : ""
+							currentAccount.background?.type == "color" ? "bg-gray-400" : ""
 						}  w-full h-[250px]`}>
-						{currentAccount.background.type == "image" && (
+						{currentAccount.background?.type == "image" && (
 							<Image
 								src={
 									currentAccount?.background.value
@@ -82,13 +101,13 @@ const UserComponent = ({ currentAccount }: { currentAccount: UserAccount }) => {
 				</div>
 				<SeeMore
 					className={`${theme} info-description !w-[400px]`}
-					text={currentAccount.bio}
+					text={currentAccount?.bio || ""}
 					maxLength={400}
 				/>
 			</div>
 
 			<div className="flex flex-wrap gap-4 justify-center w-[260px] mx-auto">
-				{accountLinks.map((vl) => {
+				{accountLinks?.map((vl) => {
 					const { value, icon }: { value: string; icon: JSX.Element } = vl!;
 					return (
 						<Link
@@ -104,6 +123,8 @@ const UserComponent = ({ currentAccount }: { currentAccount: UserAccount }) => {
 				{currentAccount.links?.custom.map((link) => {
 					return (
 						<LinkCard
+							withAction={true}
+							currentUserName={currentAccount.userName || ""}
 							title={link.title || "Title"}
 							link={link.url || ""}
 							theme={"default-theme"}
