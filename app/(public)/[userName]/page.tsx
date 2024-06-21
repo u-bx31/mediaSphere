@@ -37,11 +37,11 @@ const UserLink = async ({ params }: { params: { userName: string } }) => {
 	if (currentAccount.statueCode == 404) {
 		notFound();
 	} else {
-		// await AddEventAction({
-		// 	userName: params.userName,
-		// 	eventType: "view",
-		// 	eventTarget: params.userName,
-		// });
+		await AddEventAction({
+			userName: params.userName,
+			eventType: "view",
+			eventTarget: params.userName,
+		});
 	}
 	return (
 		<div className="w-full h-screen flex items-center justify-center">

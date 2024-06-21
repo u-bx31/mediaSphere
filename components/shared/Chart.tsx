@@ -19,20 +19,18 @@ const Chart = ({ data }: { data: any }) => {
 				data={data}
 				margin={{
 					top: 5,
-					right: 5,
-					left: 5,
+					right: 30,
+					left: 10,
 					bottom: 5,
 				}}>
 				<CartesianGrid strokeDasharray="1 3" />
 				<XAxis axisLine={false} dataKey="_id" tickMargin={15} />
 				<YAxis axisLine={false} tickMargin={10} />
 				<Tooltip />
-				<Legend />
 				<Line
 					type="monotone"
 					dataKey="count"
 					strokeWidth={2}
-					name="Views"
 					stroke="#0ead58"
 					activeDot={{ r: 4 }}
 				/>

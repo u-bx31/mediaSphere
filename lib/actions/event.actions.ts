@@ -11,7 +11,7 @@ export async function GetViewsCount(userName: string) {
 		throw new Error(`This UserName not exist`);
 	} else {
 		try {
-			const count= await Event.aggregate([
+			const count = await Event.aggregate([
 				{
 					$match: {
 						type: "view",
@@ -35,7 +35,48 @@ export async function GetViewsCount(userName: string) {
 					$sort: { _id: 1 },
 				},
 			]);
-			return count
+			return count;
+		} catch (error: any) {
+			throw new Error(`Failed to fetch user :${error}`);
+		}
+	}
+}
+
+export async function GetLinksViewsCount(userName: string) {
+	ConnectionToDb();
+
+	const userAccount = await Account.findOne({ userName: userName });
+
+	if (!userAccount) {
+		throw new Error(`This UserName not exist`);
+	} else {
+		try {
+			const count = await Event.aggregate([
+				{
+					$match: {
+						type: "click",
+						userAccount: userName,
+					},
+				},
+				{
+					$group: {
+						_id: {
+							$dateToString: {
+								date: "$createdAt",
+								format: "%Y-%m-%d",
+							},
+						},
+						link: { $addToSet: "$target" },
+						count: {
+							$count: {},
+						},
+					},
+				},
+				{
+					$sort: { _id: 1 },
+				},
+			]);
+			return count;
 		} catch (error: any) {
 			throw new Error(`Failed to fetch user :${error}`);
 		}
@@ -58,7 +99,11 @@ export async function AddEventAction({
 		throw new Error(`This UserName not exist`);
 	} else {
 		try {
-			await Event.create({ type: eventType, target: eventTarget });
+			await Event.create({
+				type: eventType,
+				userAccount: userName,
+				target: eventTarget,
+			});
 		} catch (error: any) {
 			throw new Error(`Failed to fetch user :${error}`);
 		}

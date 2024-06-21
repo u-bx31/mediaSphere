@@ -3,6 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const eventSchema = new Schema(
 	{
 		type: { type: String },
+		userAccount: { type: String },
 		target: { type: String },
 	},
 	{ timestamps: true }
