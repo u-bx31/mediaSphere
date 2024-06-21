@@ -64,14 +64,6 @@ const AccountCard = ({
 					</div>
 				</div>
 				<div className="flex flex-col items-center gap-3 w-full sm:w-44 ">
-					{/* <Link href={`${currentAccount.userName}`} className="flex items-center w-full">
-						<div className="flex flex-row w-full">
-							<Link2Icon className="w-6 h-6 stroke-green-600" />
-							<p className="text-lg font-semibold text-white truncate w-full">
-								sssssssssssssss/{currentAccount.userName}
-							</p>
-						</div>
-					</Link> */}
 					<Button className="w-full" variant={"ringHover"}>
 						<Link className="w-full" href={currentAccount.userName}>
 							<div className="flex flex-row items-center gap-1">
