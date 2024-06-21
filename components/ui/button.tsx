@@ -16,7 +16,7 @@ const buttonVariants = cva(
 					"border border-input bg-background hover:bg-accent hover:text-accent-foreground",
 				secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
 				ringHover:
-					"bg-primary/40 text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:ring-2 hover:ring-primary/90 hover:ring-offset-2",
+					"bg-green-700 text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:ring-2 hover:ring-primary/90 hover:ring-offset-2",
           linkHover1:
           "relative after:absolute after:bg-primary after:bottom-2 after:h-[1.5px] after:rounded-full after:w-4/5 after:origin-bottom-left after:scale-x-100 hover:after:origin-bottom-right hover:after:scale-x-0 after:transition-transform after:ease-in-out after:duration-300",
         
