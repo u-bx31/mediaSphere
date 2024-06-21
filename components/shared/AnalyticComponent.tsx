@@ -4,16 +4,19 @@ import Chart from "./Chart";
 import Link from "next/link";
 import { Link2 } from "lucide-react";
 import { VerifyCount } from "./tools/VerCount";
-
-const AnalyticComponent = ({ viewCount, account }: any) => {
+import { title } from "process";
+import { isToday } from "date-fns";
+const AnalyticComponent = ({ viewCount, linksCount, account }: any) => {
 	const currentAccount: UserAccount = JSON.parse(account);
+	const accountViewCount = JSON.parse(viewCount);
+	const accountLinksCount = JSON.parse(linksCount);
 
 	return (
 		<div className="flex flex-col gap-5 w-full bg-white rounded-xl p-2 md:p-10 mt-5 mb-5">
 			<div className="flex flex-col gap-4">
 				<h1 className="text-lg font-bold">Account Views </h1>
 				<div className=" w-full h-[400px] ">
-					<Chart data={viewCount || [{ _id: "", count: 0 }]} />
+					<Chart data={accountViewCount || [{ _id: "", count: 0 }]} />
 				</div>
 			</div>
 			<div className="flex flex-col gap-4 mt-5">
@@ -22,7 +25,9 @@ const AnalyticComponent = ({ viewCount, account }: any) => {
 					{currentAccount.links?.custom.map(
 						(link: { title: string; url: string; icon: string }) => {
 							return (
-								<div className="flex flex-row gap-3 justify-between bg-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] rounded-xl p-5">
+								<div
+									key={title}
+									className="flex flex-row gap-3 justify-between bg-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] rounded-xl p-5">
 									<div className="flex flex-row gap-3 items-center">
 										<Link2 className="w-6 h-6 stroke-blue-500 " />
 										<div className="flex flex-col gap-1">
@@ -35,11 +40,23 @@ const AnalyticComponent = ({ viewCount, account }: any) => {
 									<div className="flex flex-row gap-2">
 										<div className="bg-secondary w-16 p-3 flex flex-col items-center justify-center rounded-lg">
 											<p className="text-sm font-semibold">today</p>
-											<p>{VerifyCount(10000)}</p>
+											<p>
+												{VerifyCount(
+													accountLinksCount.filter(
+														(c: any) => c.target === link.url && isToday(c.createdAt)
+													).length
+												)}
+
+												{}
+											</p>
 										</div>
 										<div className="bg-secondary p-3 w-16 flex flex-col items-center justify-center rounded-lg">
 											<p className="text-sm font-semibold">total</p>
-											<p>0</p>
+											<p>
+												{VerifyCount(
+													accountLinksCount.filter((c: any) => c.target === link.url).length
+												)}
+											</p>
 										</div>
 									</div>
 								</div>

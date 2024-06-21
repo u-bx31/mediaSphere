@@ -8,10 +8,13 @@ const Page = async () => {
 	const { data: account } = await findUserAccount(user?.id || "");
 	const viewCount = account ? await GetViewsCount(account?.userName) : {};
 	const linksCount = account ? await GetLinksViewsCount(account?.userName) : {};
-
 	return (
 		<div className="md:container flex flex-col justify-center items-center w-full px-4 md:px-auto">
-			<AnalyticComponent viewCount={viewCount} account={JSON.stringify(account)} />
+			<AnalyticComponent
+				viewCount={JSON.stringify(viewCount)}
+				linksCount={JSON.stringify(linksCount)}
+				account={JSON.stringify(account)}
+			/>
 		</div>
 	);
 };

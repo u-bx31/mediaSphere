@@ -51,31 +51,10 @@ export async function GetLinksViewsCount(userName: string) {
 		throw new Error(`This UserName not exist`);
 	} else {
 		try {
-			const count = await Event.aggregate([
-				{
-					$match: {
-						type: "click",
-						userAccount: userName,
-					},
-				},
-				{
-					$group: {
-						_id: {
-							$dateToString: {
-								date: "$createdAt",
-								format: "%Y-%m-%d",
-							},
-						},
-						link: { $addToSet: "$target" },
-						count: {
-							$count: {},
-						},
-					},
-				},
-				{
-					$sort: { _id: 1 },
-				},
-			]);
+			const count = await Event.find({
+				userAccount: userName,
+				type: "click",
+			});
 			return count;
 		} catch (error: any) {
 			throw new Error(`Failed to fetch user :${error}`);
