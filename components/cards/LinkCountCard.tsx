@@ -17,7 +17,8 @@ const LinksCountCard = ({
 	return (
 		<div
 			key={title}
-			className="w-full flex flex-col xs:flex-row gap-4 items-center justify-between bg-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] rounded-xl p-3 sm:p-5">
+			className="relative w-full h-fit flex flex-col xs:flex-row gap-4 items-center justify-between  shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] rounded-xl p-3 sm:p-5">
+			<div className="absolute h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] z-10"></div>
 			<div className="flex flex-row gap-3 items-center order-2 xs:order-1">
 				<Link2 className="w-6 h-6 stroke-blue-500 hidden xs:flex" />
 				<div className="flex flex-col gap-1 items-center xs:items-start">
