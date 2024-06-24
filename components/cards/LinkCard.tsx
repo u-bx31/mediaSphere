@@ -1,4 +1,4 @@
-import { LinkIcon } from "lucide-react";
+import { LinkIcon, MoveUpRightIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -32,23 +32,29 @@ const LinkCard = ({
 					 `
 					: undefined
 			}
-			className={`${theme} links-card ${cardClassName}`}>
-			{image && (
-				<div className={`${theme} links-card-image ${imgClassName}`}>
-					<Image
-						src={image ? image : "/assets/svgs/profile.svg"}
-						alt="avatar"
-						width={1980}
-						height={900}
-						priority={image != ""}
-						className={`!w-full !h-full object-cover rounded-lg`}
-					/>
-				</div>
-			)}
-			<div
-				className={`flex flex-row gap-2 items-center ${image ? "pl-0" : "pl-4"} `}>
-				<LinkIcon className={`${theme} links-card-icon`} />
-				<p className={`${theme} links-card-title`}>{title}</p>
+			className={`${theme} links-card ${cardClassName} group`}>
+			<div>
+				{image && (
+					<div className={`${theme} links-card-image ${imgClassName}`}>
+						<Image
+							src={image ? image : "/assets/svgs/profile.svg"}
+							alt="avatar"
+							width={1980}
+							height={900}
+							priority={image != ""}
+							className={`!w-full !h-full object-cover`}
+						/>
+					</div>
+				)}
+			</div>
+			<p
+				className={`${theme} links-card-title mx-auto ${
+					image ? "!w-[250px] sm:!w-[320px]" : "!w-full"
+				}`}>
+				{title}
+			</p>
+			<div className={`${theme} links-card-icon-div`}>
+				<MoveUpRightIcon className={`${theme} links-card-icon`} />
 			</div>
 		</Link>
 	);

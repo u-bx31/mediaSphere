@@ -25,7 +25,7 @@ export default function Phone({
 
 	return (
 		<div className="relative items-start min-h-[90dvh] max-h-full lg:flex w-1/2 justify-center hidden pl-2 xl:pl-5">
-			<div className="absolute z-10 rounded-[50px] w-[300px] border-[10px] border-black overflow-hidden">
+			<div className="absolute z-10 rounded-[50px] w-[320px] xl:w-[370px] border-[10px] border-black overflow-hidden">
 				{loading && (
 					<div className="bg-white/70 backdrop-blur-sm absolute h-full w-full flex flex-col gap-3 items-center justify-center z-40 transition-all ease-linear">
 						<Loader2Icon className="w-8 h-8 animate-spin" />
@@ -89,12 +89,6 @@ export default function Phone({
 									{currentAccount?.location || "-"}
 								</p>
 							</div>
-							<div className="flex items-center flex-row gap-1">
-								<LinkIcon className={`${theme} info-icon`} />
-								<p className={`${theme} info-text`}>
-									{currentAccount?.userName || "-"}
-								</p>
-							</div>
 						</div>
 						<SeeMore
 							className={`${theme} info-description`}
@@ -116,7 +110,7 @@ export default function Phone({
 						})}
 					</div>
 
-					<div className="flex flex-col gap-3 items-center w-[260px] h-full mx-auto justify-start mt-5 mb-5">
+					<div className="flex flex-col gap-4 items-center w-full xl:w-[320px] px-2 h-full mx-auto justify-start mt-5 mb-5">
 						{currentAccount.links?.custom.map((link) => {
 							return (
 								<LinkCard

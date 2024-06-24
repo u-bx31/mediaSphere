@@ -44,7 +44,7 @@ const UserLink = async ({ params }: { params: { userName: string } }) => {
 		});
 	}
 	return (
-		<div className="w-full h-screen flex items-center justify-center">
+		<div className="w-full h-full flex items-center justify-center">
 			<UserComponent account={JSON.stringify(currentAccount?.data)} />
 		</div>
 	);
