@@ -27,7 +27,7 @@ const HeroForm = ({ user, account }: any) => {
 			setBtnLoading(false);
 			toast({
 				title: "Validation error",
-				description: "Something Wrong,try again later",
+				description: "Something Wrong,try sign-up first",
 				variant: "destructive",
 			});
 		}

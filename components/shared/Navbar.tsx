@@ -24,6 +24,7 @@ import {
 import Image from "next/image";
 import { toast } from "@/components/ui/use-toast";
 import { UserAccount } from "@/constants/types";
+import { Button } from "../ui/button";
 
 const Navbar = ({ user, userAccount }: any) => {
 	const currentUser = JSON.parse(user);
@@ -139,11 +140,14 @@ const Navbar = ({ user, userAccount }: any) => {
 					</SignedIn>
 
 					<SignedOut>
-						<button
-							className="bg-gray-400 rounded-full w-10 h-10 flex items-center justify-center mr-4 md:mr-0"
-							onClick={() => push("/sign-in")}>
-							<User className="w-5 h-5" />
-						</button>
+						<div className="flex flex-row gap-2 mr-4 md:mr-0">
+							<Button variant={"outline"} className="p-3 md:p-4" onClick={() => push("/sign-up")}>
+								Sign-up
+							</Button>
+							<Button variant={"ringHover"} className="p-3 md:p-4" onClick={() => push("/sign-in")}>
+								Sign-in
+							</Button>
+						</div>
 					</SignedOut>
 				</div>
 				{/* <div
