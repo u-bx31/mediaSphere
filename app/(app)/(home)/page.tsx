@@ -6,9 +6,9 @@ export default async function Home() {
 	const user = await currentUser();
 	const { data: account } = await findUserAccount(user?.id || "");
 	return (
-		<div className="container flex flex-col justify-center items-center">
+		<div className="md:container flex flex-col justify-center items-center px-3 sm:px-auto">
 			<section className="relative">
-				<div className="relative z-10 max-w-screen-xl mx-auto px-4 py-28 md:px-8">
+				<div className="relative z-10 max-w-screen-xl mx-auto px-4 py-10 md:py-28 md:px-8">
 					<div className="space-y-5 max-w-4xl mx-auto text-center">
 						<h2 className="text-4xl text-primary font-extrabold mx-auto md:text-6xl">
 							Build your{" "}

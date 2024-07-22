@@ -45,7 +45,7 @@ const Navbar = ({ user, userAccount }: any) => {
 		<nav className="navbar-class">
 			<div className={`flex flex-wrap items-center justify-between mx-auto  `}>
 				<div className="flex flex-row items-center">
-					<div className="md:hidden">
+					{/* <div className="md:hidden">
 						<Sheet>
 							<SheetTrigger>
 								<button className="flex items-center">
@@ -85,7 +85,7 @@ const Navbar = ({ user, userAccount }: any) => {
 								</ul>
 							</SheetContent>
 						</Sheet>
-					</div>
+					</div> */}
 					<a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
 						<Logo className={"w-fit h-14 lg:w-20 lg:h-20"} />
 					</a>
@@ -146,7 +146,7 @@ const Navbar = ({ user, userAccount }: any) => {
 						</button>
 					</SignedOut>
 				</div>
-				<div
+				{/* <div
 					className={`justify-between hidden items-center w-full md:flex md:w-auto md:order-1`}
 					id="navbar-user">
 					<ul className="flex flex-col gap-6 md:gap-0 font-medium p-4 md:p-0 mt-4 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 ">
@@ -168,7 +168,7 @@ const Navbar = ({ user, userAccount }: any) => {
 							);
 						})}
 					</ul>
-				</div>
+				</div> */}
 			</div>
 		</nav>
 	);

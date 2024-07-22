@@ -73,7 +73,7 @@ const HeroForm = ({ user, account }: any) => {
 					className="w-full pl-1 pr-3 py-4 text-gray-400 bg-white border-none focus:border-gray-300 duration-150 outline-none rounded-lg sm:max-w-sm sm:w-auto"
 				/>
 			</div>
-			<SubmitButton className={"!w-full md:!w-[200px]"} loading={btnLoading}>
+			<SubmitButton className={"!w-full sm:!w-[200px]"} loading={btnLoading}>
 				Get started for free
 				<MoveRight className="w-5 h-5 stroke-white" />
 			</SubmitButton>
