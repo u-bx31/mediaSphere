@@ -29,7 +29,7 @@ const AccountCard = ({
 			)}
 			<div className="absolute h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] z-10"></div>
 
-			<div className="w-full flex flex-col sm:flex-row gap-4 lg:gap-10 my-2 sm:my-5 items-center justify-center px-2 sm:px-3 z-20">
+			<div className="w-full flex flex-col sm:flex-row gap-4 lg:gap-10 my-2 sm:my-5 items-center justify-between px-2 sm:px-3 z-20">
 				<div className="flex flex-col sm:flex-row gap-4 lg:gap-10  items-center justify-center">
 					<div className="w-24 h-24 lg:w-[117px] lg:h-28 xl:w-36 xl:h-36 rounded-full flex items-center justify-center bg-gray-400 border-4 border-white shadow-lg">
 						<Image
@@ -48,8 +48,8 @@ const AccountCard = ({
 						/>
 					</div>
 					<div className="flex flex-col gap-3  items-center sm:items-start">
-						<h1 className="text-xl text-primary text-center sm:text-start font-extrabold mx-auto xl:text-3xl transition-all">
-							Welcome {currentAccount?.userName || "userName"} to your account
+						<h1 className="text-xl xs:text-2xl text-primary text-center sm:text-start font-extrabold mx-auto xl:text-3xl transition-all">
+							Welcome {currentAccount?.userName || "userName"}
 						</h1>
 						<div className="flex flex-col gap-1 pl-2">
 							<div className="flex flex-row gap-2">
